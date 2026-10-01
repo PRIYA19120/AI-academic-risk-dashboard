@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Academic Risk Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            🎓
+        </div>
+
+        <nav>
+
+            <a href="#" class="nav-item active">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>▤</span>
+                <span>Courses</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>♙</span>
+                <span>Students</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>▧</span>
+                <span>Reports</span>
+            </a>
+
+            <div class="sidebar-line"></div>
+
+            <a href="#" class="nav-item">
+                <span>⚙</span>
+                <span>Settings</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>♙</span>
+                <span>Profile</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <h1>Academic Risk Dashboard</h1>
+
+        <p class="subtitle">
+            Monitor student performance and identify students requiring academic support.
+        </p>
+
+        <!-- DASHBOARD CARDS -->
+        <div class="cards">
+
+            <div class="card">
+                <h3>Total Students</h3>
+                <h2>120</h2>
+            </div>
+
+            <div class="card">
+                <h3>Low Risk</h3>
+                <h2>65</h2>
+            </div>
+
+            <div class="card">
+                <h3>Moderate Risk</h3>
+                <h2>35</h2>
+            </div>
+
+            <div class="card">
+                <h3>Further Review</h3>
+                <h2>20</h2>
+            </div>
+
+        </div>
+
+
+        <!-- CHART AREA -->
+        <div class="chart-section">
+
+            <div class="chart-card">
+                <h2>Academic Performance</h2>
+
+                <div class="fake-chart">
+                    <div class="bar bar1"></div>
+                    <div class="bar bar2"></div>
+                    <div class="bar bar3"></div>
+                    <div class="bar bar4"></div>
+                    <div class="bar bar5"></div>
+                </div>
+
+                <div class="chart-labels">
+                    <span>Attendance</span>
+                    <span>Assignment</span>
+                    <span>Quiz</span>
+                    <span>Internal</span>
+                    <span>Exam</span>
+                </div>
+
+            </div>
+
+
+            <div class="chart-card">
+                <h2>Risk Distribution</h2>
+
+                <div class="risk-box">
+                    <div class="risk-circle">
+                        120
+                    </div>
+
+                    <p>Students Analyzed</p>
+
+                    <div class="risk-info">
+                        <span>● Low Risk</span>
+                        <span>● Moderate Risk</span>
+                        <span>● Further Review</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STUDENT TABLE -->
+        <div class="student-section">
+
+            <h2>Students Requiring Further Review</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student</th>
+                        <th>Attendance</th>
+                        <th>Marks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>S001</td>
+                        <td>Student 1</td>
+                        <td>54%</td>
+                        <td>46%</td>
+                        <td><span class="status review">Review</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>S002</td>
+                        <td>Student 2</td>
+                        <td>61%</td>
+                        <td>52%</td>
+                        <td><span class="status review">Review</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>S003</td>
+                        <td>Student 3</td>
+                        <td>58%</td>
+                        <td>49%</td>
+                        <td><span class="status review">Review</span></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

@@ -80,67 +80,70 @@
         <h2>{{ average_marks }}%</h2>
     </div>
 
-    <div class="card">
-        <h3>Low Risk</h3>
-        <h2>65</h2>
-    </div>
+   <div class="card">
+    <h3>Low Support Need</h3>
+    <h2>{{ low_support }}</h2>
+</div>
 
-    <div class="card">
-        <h3>Moderate Risk</h3>
-        <h2>35</h2>
-    </div>
+<div class="card">
+    <h3>Moderate Support</h3>
+    <h2>{{ moderate_support }}</h2>
+</div>
 
-    <div class="card">
-        <h3>Further Review</h3>
-        <h2>20</h2>
-    </div>
+<div class="card">
+    <h3>Further Review</h3>
+    <h2>{{ further_review }}</h2>
+</div>
 
 </div>
 
         <!-- CHART AREA -->
         <div class="chart-section">
 
-            <div class="chart-card">
-                <h2>{{ average_attendance }}%</h2>
+            <div class="chart-card performance-line-card">
 
-                <div class="fake-chart">
-                    <div class="bar bar1"></div>
-                    <div class="bar bar2"></div>
-                    <div class="bar bar3"></div>
-                    <div class="bar bar4"></div>
-                    <div class="bar bar5"></div>
-                </div>
+    <h2>Academic Performance</h2>
 
-                <div class="chart-labels">
-                    <span>Attendance</span>
-                    <span>Assignment</span>
-                    <span>Quiz</span>
-                    <span>Internal</span>
-                    <span>Exam</span>
-                </div>
+    <p class="chart-subtitle">
+        Average performance across academic components
+    </p>
 
-            </div>
+    <div class="line-chart-container">
+        <canvas id="performanceChart"></canvas>
+    </div>
 
+</div>
 
             <div class="chart-card">
-                <h2>Risk Distribution</h2>
+    <h2>Support Distribution</h2>
 
-                <div class="risk-box">
-                    <div class="risk-circle">
-                        120
-                    </div>
+    <div class="risk-box">
 
-                    <p>Students Analyzed</p>
+        <div class="risk-circle">
+            {{ total_students }}
+        </div>
 
-                    <div class="risk-info">
-                        <span>● Low Risk</span>
-                        <span>● Moderate Risk</span>
-                        <span>● Further Review</span>
-                    </div>
-                </div>
+        <p>Students Analyzed</p>
 
-            </div>
+        <div class="risk-info">
 
+            <span>
+                ● Low Support Need: {{ low_support }}
+            </span>
+
+            <span>
+                ● Moderate Support: {{ moderate_support }}
+            </span>
+
+            <span>
+                ● Further Review: {{ further_review }}
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
         </div>
 
 
@@ -161,40 +164,118 @@
                     </tr>
                 </thead>
 
-                <tbody>
+<tbody>
 
-                    <tr>
-                        <td>S001</td>
-                        <td>Student 1</td>
-                        <td>54%</td>
-                        <td>46%</td>
-                        <td><span class="status review">Review</span></td>
-                    </tr>
+   {% for student in review_students %}
+<tr>
 
-                    <tr>
-                        <td>S002</td>
-                        <td>Student 2</td>
-                        <td>61%</td>
-                        <td>52%</td>
-                        <td><span class="status review">Review</span></td>
-                    </tr>
+    <td>
+        <a href="/student/{{ student['Student_ID'] }}" class="student-link">
+            {{ student["Student_ID"] }}
+        </a>
+    </td>
 
-                    <tr>
-                        <td>S003</td>
-                        <td>Student 3</td>
-                        <td>58%</td>
-                        <td>49%</td>
-                        <td><span class="status review">Review</span></td>
-                    </tr>
+    <td>
+        <a href="/student/{{ student['Student_ID'] }}" class="student-link">
+            {{ student["Student_Name"] }}
+        </a>
+    </td>
 
-                </tbody>
+    <td>{{ student["Attendance"] }}%</td>
 
+    <td>{{ student["Final_Marks"] }}%</td>
+
+    <td>
+        <a href="/student/{{ student['Student_ID'] }}" class="review-link">
+            <span class="status review">
+                Review →
+            </span>
+        </a>
+    </td>
+
+</tr>
+{% endfor %}
+</tbody>
             </table>
 
         </div>
 
     </main>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('performanceChart');
+
+    new Chart(ctx, {
+        type: 'line',
+
+        data: {
+            labels: [
+                'Attendance',
+                'Assignment',
+                'Quiz',
+                'Internal',
+                'Exam'
+            ],
+
+            datasets: [{
+                label: 'Average Performance',
+
+                data: [
+                    {{ average_attendance }},
+                    {{ average_assignment }},
+                    {{ average_quiz }},
+                    {{ average_internal }},
+                    {{ average_exam }}
+                ],
+
+                borderColor: '#c43cff',
+                backgroundColor: 'rgba(196, 60, 255, 0.12)',
+
+                borderWidth: 3,
+
+                pointRadius: 5,
+                pointHoverRadius: 8,
+
+                tension: 0.4,
+
+                fill: true
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

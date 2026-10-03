@@ -4,346 +4,504 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Courses | Academic Risk Dashboard</title>
+    <title>Courses | AI Academic Risk Dashboard</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
+
 <body>
 
-    <!-- ================= SIDEBAR ================= -->
 
-    <aside class="sidebar">
+<!-- ================= SIDEBAR ================= -->
 
-        <div class="logo">
-            🎓
-        </div>
+<aside class="sidebar">
 
-        <nav>
-
-            <!-- Dashboard -->
-            <a href="/" class="nav-item">
-                <span>▣</span>
-                <span>Dashboard</span>
-            </a>
-
-            <!-- Courses -->
-            <a href="/courses" class="nav-item active">
-                <span>▤</span>
-                <span>Courses</span>
-            </a>
-
-            <!-- Students -->
-            <a href="#" class="nav-item">
-                <span>♙</span>
-                <span>Students</span>
-            </a>
-
-            <!-- Reports -->
-            <a href="#" class="nav-item">
-                <span>▧</span>
-                <span>Reports</span>
-            </a>
-
-            <div class="sidebar-line"></div>
-
-            <!-- Settings -->
-            <a href="#" class="nav-item">
-                <span>⚙</span>
-                <span>Settings</span>
-            </a>
-
-            <!-- Profile -->
-            <a href="#" class="nav-item">
-                <span>♙</span>
-                <span>Profile</span>
-            </a>
-
-        </nav>
-
-    </aside>
+    <!-- Logo -->
+    <div class="logo">
+        🎓
+    </div>
 
 
-    <!-- ================= MAIN CONTENT ================= -->
+    <!-- Navigation -->
 
-    <main class="main-content">
+    <nav>
 
-        <h1>Courses</h1>
+        <a href="/" class="nav-item">
 
-        <p class="subtitle">
-            Monitor academic performance across different courses.
-        </p>
+            <span>🏠</span>
 
+            <span>Dashboard</span>
 
-        <!-- ================= COURSE GRID ================= -->
-
-        <div class="course-grid">
+        </a>
 
 
-            <!-- ================================================= -->
-            <!-- 1. MACHINE LEARNING -->
-            <!-- ================================================= -->
+        <a href="/courses" class="nav-item active">
 
-            <div class="course-card">
+            <span>📚</span>
 
-                <div class="course-icon">
-                    🤖
-                </div>
+            <span>Courses</span>
 
-                <h2>Machine Learning</h2>
+        </a>
 
-                <p>
-                    AI and machine learning concepts,
-                    algorithms and model evaluation.
-                </p>
+    </nav>
 
-                <div class="course-stats">
+</aside>
 
-                    <div>
-                        <strong>45</strong>
-                        <span>Students</span>
-                    </div>
 
-                    <div>
-                        <strong>76%</strong>
-                        <span>Avg. Marks</span>
-                    </div>
 
-                    <div>
-                        <strong>81%</strong>
-                        <span>Attendance</span>
-                    </div>
+<!-- ================= MAIN CONTENT ================= -->
+
+<main class="main-content">
+
+
+    <h1>Courses</h1>
+
+    <p class="subtitle">
+        Monitor academic performance across different courses.
+    </p>
+
+
+
+    <!-- ================= COURSE GRID ================= -->
+
+    <div class="course-grid">
+
+
+        <!-- MACHINE LEARNING -->
+
+        <div class="course-card">
+
+            <div class="course-icon">
+                🤖
+            </div>
+
+            <h2>
+                Machine Learning
+            </h2>
+
+            <p>
+                AI and machine learning concepts, algorithms and model evaluation.
+            </p>
+
+
+            <div class="course-stats">
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Machine Learning"]["students"] }}
+                    </strong>
+
+                    <span>
+                        Students
+                    </span>
 
                 </div>
 
-                <a href="/course/machine-learning" class="view-course">
-    View Course
-</a>
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Machine Learning"]["avg_marks"] }}%
+                    </strong>
+
+                    <span>
+                        Avg. Marks
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Machine Learning"]["attendance"] }}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
 
             </div>
 
 
-            <!-- ================================================= -->
-            <!-- 2. DBMS -->
-            <!-- ================================================= -->
+            <a href="/course/machine-learning"
+               class="view-course">
 
-            <div class="course-card">
+                View Course
 
-                <div class="course-icon">
-                    🗄️
-                </div>
-
-                <h2>DBMS</h2>
-
-                <p>
-                    Database management, SQL,
-                    relational models and transactions.
-                </p>
-
-                <div class="course-stats">
-
-                    <div>
-                        <strong>48</strong>
-                        <span>Students</span>
-                    </div>
-
-                    <div>
-                        <strong>72%</strong>
-                        <span>Avg. Marks</span>
-                    </div>
-
-                    <div>
-                        <strong>78%</strong>
-                        <span>Attendance</span>
-                    </div>
-
-                </div>
-
-                <a href="/course/dbms" class="view-course">
-    View Course
-</a>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- 3. CLOUD COMPUTING -->
-            <!-- ================================================= -->
-
-            <div class="course-card">
-
-                <div class="course-icon">
-                    ☁️
-                </div>
-
-                <h2>Cloud Computing</h2>
-
-                <p>
-                    Cloud architecture, virtualization,
-                    services and deployment models.
-                </p>
-
-                <div class="course-stats">
-
-                    <div>
-                        <strong>42</strong>
-                        <span>Students</span>
-                    </div>
-
-                    <div>
-                        <strong>74%</strong>
-                        <span>Avg. Marks</span>
-                    </div>
-
-                    <div>
-                        <strong>84%</strong>
-                        <span>Attendance</span>
-                    </div>
-
-                </div>
-
-              <a href="/course/cloud-computing" class="view-course">View Course</a>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- 4. DATA STRUCTURES -->
-            <!-- ================================================= -->
-
-            <div class="course-card">
-
-                <div class="course-icon">
-                    🌳
-                </div>
-
-                <h2>Data Structures</h2>
-
-                <p>
-                    Arrays, linked lists, stacks,
-                    queues, trees and graphs.
-                </p>
-
-                <div class="course-stats">
-
-                    <div>
-                        <strong>46</strong>
-                        <span>Students</span>
-                    </div>
-
-                    <div>
-                        <strong>69%</strong>
-                        <span>Avg. Marks</span>
-                    </div>
-
-                    <div>
-                        <strong>75%</strong>
-                        <span>Attendance</span>
-                    </div>
-
-                </div>
-
-                <a href="/course/data-structures" class="view-course">View Course</a>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- 5. PYTHON -->
-            <!-- ================================================= -->
-
-            <div class="course-card">
-
-                <div class="course-icon">
-                    🐍
-                </div>
-
-                <h2>Python</h2>
-
-                <p>
-                    Python programming, problem solving,
-                    functions, data handling and libraries.
-                </p>
-
-                <div class="course-stats">
-
-                    <div>
-                        <strong>50</strong>
-                        <span>Students</span>
-                    </div>
-
-                    <div>
-                        <strong>78%</strong>
-                        <span>Avg. Marks</span>
-                    </div>
-
-                    <div>
-                        <strong>82%</strong>
-                        <span>Attendance</span>
-                    </div>
-
-                </div>
-
-                <a href="/course/python" class="view-course">View Course</a>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- 6. DATA SCIENCE -->
-            <!-- ================================================= -->
-
-            <div class="course-card">
-
-                <div class="course-icon">
-                    📊
-                </div>
-
-                <h2>Data Science</h2>
-
-                <p>
-                    Data analysis, statistics, visualization,
-                    preprocessing and predictive techniques.
-                </p>
-
-                <div class="course-stats">
-
-                    <div>
-                        <strong>47</strong>
-                        <span>Students</span>
-                    </div>
-
-                    <div>
-                        <strong>75%</strong>
-                        <span>Avg. Marks</span>
-                    </div>
-
-                    <div>
-                        <strong>79%</strong>
-                        <span>Attendance</span>
-                    </div>
-
-                </div>
-
-               <a href="/course/data-science" class="view-course">View Course</a>
-
-            </div>
-
+            </a>
 
         </div>
 
-    </main>
 
 
-    <!-- JAVASCRIPT -->
+        <!-- DBMS -->
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+        <div class="course-card">
+
+            <div class="course-icon">
+                🗄️
+            </div>
+
+            <h2>
+                DBMS
+            </h2>
+
+            <p>
+                Database management, SQL, relational models and transactions.
+            </p>
+
+
+            <div class="course-stats">
+
+                <div>
+
+                    <strong>
+                        {{ course_data["DBMS"]["students"] }}
+                    </strong>
+
+                    <span>
+                        Students
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["DBMS"]["avg_marks"] }}%
+                    </strong>
+
+                    <span>
+                        Avg. Marks
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["DBMS"]["attendance"] }}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <a href="/course/dbms"
+               class="view-course">
+
+                View Course
+
+            </a>
+
+        </div>
+
+
+
+        <!-- CLOUD COMPUTING -->
+
+        <div class="course-card">
+
+            <div class="course-icon">
+                ☁️
+            </div>
+
+            <h2>
+                Cloud Computing
+            </h2>
+
+            <p>
+                Cloud architecture, virtualization, services and deployment models.
+            </p>
+
+
+            <div class="course-stats">
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Cloud Computing"]["students"] }}
+                    </strong>
+
+                    <span>
+                        Students
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Cloud Computing"]["avg_marks"] }}%
+                    </strong>
+
+                    <span>
+                        Avg. Marks
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Cloud Computing"]["attendance"] }}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <a href="/course/cloud-computing"
+               class="view-course">
+
+                View Course
+
+            </a>
+
+        </div>
+
+
+
+        <!-- DATA STRUCTURES -->
+
+        <div class="course-card">
+
+            <div class="course-icon">
+                🌳
+            </div>
+
+            <h2>
+                Data Structures
+            </h2>
+
+            <p>
+                Arrays, linked lists, stacks, queues, trees and graphs.
+            </p>
+
+
+            <div class="course-stats">
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Data Structures"]["students"] }}
+                    </strong>
+
+                    <span>
+                        Students
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Data Structures"]["avg_marks"] }}%
+                    </strong>
+
+                    <span>
+                        Avg. Marks
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Data Structures"]["attendance"] }}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <a href="/course/data-structures"
+               class="view-course">
+
+                View Course
+
+            </a>
+
+        </div>
+
+
+
+        <!-- PYTHON -->
+
+        <div class="course-card">
+
+            <div class="course-icon">
+                🐍
+            </div>
+
+            <h2>
+                Python
+            </h2>
+
+            <p>
+                Python programming, data handling, libraries and application development.
+            </p>
+
+
+            <div class="course-stats">
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Python"]["students"] }}
+                    </strong>
+
+                    <span>
+                        Students
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Python"]["avg_marks"] }}%
+                    </strong>
+
+                    <span>
+                        Avg. Marks
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Python"]["attendance"] }}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <a href="/course/python"
+               class="view-course">
+
+                View Course
+
+            </a>
+
+        </div>
+
+
+
+        <!-- DATA SCIENCE -->
+
+        <div class="course-card">
+
+            <div class="course-icon">
+                📊
+            </div>
+
+            <h2>
+                Data Science
+            </h2>
+
+            <p>
+                Data analysis, visualization, statistics and machine learning concepts.
+            </p>
+
+
+            <div class="course-stats">
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Data Science"]["students"] }}
+                    </strong>
+
+                    <span>
+                        Students
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Data Science"]["avg_marks"] }}%
+                    </strong>
+
+                    <span>
+                        Avg. Marks
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ course_data["Data Science"]["attendance"] }}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <a href="/course/data-science"
+               class="view-course">
+
+                View Course
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
 
 </body>
 

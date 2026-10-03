@@ -612,3 +612,35 @@ td {
         padding: 22px;
     }
 }
+.performance-line-card {
+    min-height: 420px;
+}
+
+.chart-subtitle {
+    color: #9d91a9;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+.line-chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+.student-link,
+.review-link {
+    text-decoration: none;
+}
+
+.student-link {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.student-link:hover {
+    color: #c43cff;
+}
+
+.review-link .status {
+    cursor: pointer;
+}

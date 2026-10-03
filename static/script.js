@@ -1,17 +1,18 @@
 const navItems = document.querySelectorAll(".nav-item");
 
 navItems.forEach(item => {
-    item.addEventListener("click", function (event) {
-        event.preventDefault();
+    item.addEventListener("click", function(event) {
 
-        navItems.forEach(nav => {
-            nav.classList.remove("active");
-        });
+        // Sirf "#" wale links ko rokna hai
+        if (this.getAttribute("href") === "#") {
+            event.preventDefault();
 
-        this.classList.add("active");
+            navItems.forEach(nav => {
+                nav.classList.remove("active");
+            });
 
-        const pageName = this.querySelector("span:last-child").textContent;
+            this.classList.add("active");
+        }
 
-        console.log("Selected:", pageName);
     });
 });

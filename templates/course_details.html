@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Machine Learning | Academic Risk Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            🎓
+        </div>
+
+        <nav>
+
+            <a href="/" class="nav-item">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/courses" class="nav-item active">
+                <span>▤</span>
+                <span>Courses</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>♙</span>
+                <span>Students</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>▧</span>
+                <span>Reports</span>
+            </a>
+
+            <div class="sidebar-line"></div>
+
+            <a href="#" class="nav-item">
+                <span>⚙</span>
+                <span>Settings</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>♙</span>
+                <span>Profile</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <a href="/courses"
+           style="color:#c77dff; text-decoration:none;">
+            ← Back to Courses
+        </a>
+
+       <h1 style="margin-top:20px;">
+    {{ course_name }}
+</h1>
+
+        <p class="subtitle">
+            Course-wise academic performance and student support analysis.
+        </p>
+
+
+        <!-- SUMMARY CARDS -->
+        <div class="dashboard-cards">
+
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <h3>Total Students</h3>
+                <h2>45</h2>
+                <p>Enrolled students</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <h3>Average Marks</h3>
+                <h2>76%</h2>
+                <p>Overall performance</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <h3>Attendance</h3>
+                <h2>81%</h2>
+                <p>Course attendance</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <h3>Further Review</h3>
+                <h2>8</h2>
+                <p>Students requiring review</p>
+            </div>
+
+        </div>
+
+
+        <!-- ANALYTICS -->
+        <div class="charts-grid">
+
+            <div class="chart-card">
+
+                <h2>Academic Performance</h2>
+
+                <p class="subtitle">
+                    Marks across assessments
+                </p>
+
+                <div class="fake-chart">
+
+                    <div class="bar" style="height:55%;">
+                        <span>Quiz</span>
+                    </div>
+
+                    <div class="bar" style="height:70%;">
+                        <span>Assignment</span>
+                    </div>
+
+                    <div class="bar" style="height:65%;">
+                        <span>Internal</span>
+                    </div>
+
+                    <div class="bar" style="height:82%;">
+                        <span>Exam</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-card">
+
+                <h2>Assessment Overview</h2>
+
+                <p class="subtitle">
+                    Course assessment performance
+                </p>
+
+                <div class="assessment-list">
+
+                    <div>
+                        <span>Assignments</span>
+                        <strong>78%</strong>
+                    </div>
+
+                    <div>
+                        <span>Quizzes</span>
+                        <strong>74%</strong>
+                    </div>
+
+                    <div>
+                        <span>Internal Assessment</span>
+                        <strong>71%</strong>
+                    </div>
+
+                    <div>
+                        <span>Final Examination</span>
+                        <strong>76%</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STUDENT TABLE -->
+        <div class="table-card">
+
+            <h2>Students Requiring Further Review</h2>
+
+            <p class="subtitle">
+                Students showing academic indicators that may require faculty review.
+            </p>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Attendance</th>
+                        <th>Marks</th>
+                        <th>Assignment</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Student 01</td>
+                        <td>62%</td>
+                        <td>54%</td>
+                        <td>58%</td>
+                        <td>
+                            <span class="status moderate">
+                                Moderate
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Student 02</td>
+                        <td>58%</td>
+                        <td>49%</td>
+                        <td>52%</td>
+                        <td>
+                            <span class="status high">
+                                Further Review
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Student 03</td>
+                        <td>67%</td>
+                        <td>61%</td>
+                        <td>64%</td>
+                        <td>
+                            <span class="status moderate">
+                                Moderate
+                            </span>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>

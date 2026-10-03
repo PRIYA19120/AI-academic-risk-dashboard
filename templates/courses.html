@@ -17,7 +17,7 @@
 
 <body>
 
-    <!-- SIDEBAR -->
+    <!-- ================= SIDEBAR ================= -->
 
     <aside class="sidebar">
 
@@ -27,21 +27,25 @@
 
         <nav>
 
+            <!-- Dashboard -->
             <a href="/" class="nav-item">
                 <span>▣</span>
                 <span>Dashboard</span>
             </a>
 
+            <!-- Courses -->
             <a href="/courses" class="nav-item active">
                 <span>▤</span>
                 <span>Courses</span>
             </a>
 
+            <!-- Students -->
             <a href="#" class="nav-item">
                 <span>♙</span>
                 <span>Students</span>
             </a>
 
+            <!-- Reports -->
             <a href="#" class="nav-item">
                 <span>▧</span>
                 <span>Reports</span>
@@ -49,11 +53,13 @@
 
             <div class="sidebar-line"></div>
 
+            <!-- Settings -->
             <a href="#" class="nav-item">
                 <span>⚙</span>
                 <span>Settings</span>
             </a>
 
+            <!-- Profile -->
             <a href="#" class="nav-item">
                 <span>♙</span>
                 <span>Profile</span>
@@ -64,7 +70,7 @@
     </aside>
 
 
-    <!-- MAIN CONTENT -->
+    <!-- ================= MAIN CONTENT ================= -->
 
     <main class="main-content">
 
@@ -75,12 +81,14 @@
         </p>
 
 
-        <!-- COURSE CARDS -->
+        <!-- ================= COURSE GRID ================= -->
 
         <div class="course-grid">
 
 
-            <!-- MACHINE LEARNING -->
+            <!-- ================================================= -->
+            <!-- 1. MACHINE LEARNING -->
+            <!-- ================================================= -->
 
             <div class="course-card">
 
@@ -114,14 +122,16 @@
 
                 </div>
 
-                <button class="view-course">
-                    View Course
-                </button>
+                <a href="/course/machine-learning" class="view-course">
+    View Course
+</a>
 
             </div>
 
 
-            <!-- DBMS -->
+            <!-- ================================================= -->
+            <!-- 2. DBMS -->
+            <!-- ================================================= -->
 
             <div class="course-card">
 
@@ -155,14 +165,16 @@
 
                 </div>
 
-                <button class="view-course">
-                    View Course
-                </button>
+                <a href="/course/dbms" class="view-course">
+    View Course
+</a>
 
             </div>
 
 
-            <!-- CLOUD COMPUTING -->
+            <!-- ================================================= -->
+            <!-- 3. CLOUD COMPUTING -->
+            <!-- ================================================= -->
 
             <div class="course-card">
 
@@ -196,19 +208,19 @@
 
                 </div>
 
-                <button class="view-course">
-                    View Course
-                </button>
+              <a href="/course/cloud-computing" class="view-course">View Course</a>
 
             </div>
 
 
-            <!-- DATA STRUCTURES -->
+            <!-- ================================================= -->
+            <!-- 4. DATA STRUCTURES -->
+            <!-- ================================================= -->
 
             <div class="course-card">
 
                 <div class="course-icon">
-                    🧩
+                    🌳
                 </div>
 
                 <h2>Data Structures</h2>
@@ -237,9 +249,89 @@
 
                 </div>
 
-                <button class="view-course">
-                    View Course
-                </button>
+                <a href="/course/data-structures" class="view-course">View Course</a>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- 5. PYTHON -->
+            <!-- ================================================= -->
+
+            <div class="course-card">
+
+                <div class="course-icon">
+                    🐍
+                </div>
+
+                <h2>Python</h2>
+
+                <p>
+                    Python programming, problem solving,
+                    functions, data handling and libraries.
+                </p>
+
+                <div class="course-stats">
+
+                    <div>
+                        <strong>50</strong>
+                        <span>Students</span>
+                    </div>
+
+                    <div>
+                        <strong>78%</strong>
+                        <span>Avg. Marks</span>
+                    </div>
+
+                    <div>
+                        <strong>82%</strong>
+                        <span>Attendance</span>
+                    </div>
+
+                </div>
+
+                <a href="/course/python" class="view-course">View Course</a>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- 6. DATA SCIENCE -->
+            <!-- ================================================= -->
+
+            <div class="course-card">
+
+                <div class="course-icon">
+                    📊
+                </div>
+
+                <h2>Data Science</h2>
+
+                <p>
+                    Data analysis, statistics, visualization,
+                    preprocessing and predictive techniques.
+                </p>
+
+                <div class="course-stats">
+
+                    <div>
+                        <strong>47</strong>
+                        <span>Students</span>
+                    </div>
+
+                    <div>
+                        <strong>75%</strong>
+                        <span>Avg. Marks</span>
+                    </div>
+
+                    <div>
+                        <strong>79%</strong>
+                        <span>Attendance</span>
+                    </div>
+
+                </div>
+
+               <a href="/course/data-science" class="view-course">View Course</a>
 
             </div>
 
@@ -248,6 +340,8 @@
 
     </main>
 
+
+    <!-- JAVASCRIPT -->
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 

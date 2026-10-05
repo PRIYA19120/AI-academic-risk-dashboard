@@ -11,7 +11,6 @@ body {
     display: flex;
 }
 
-/* ================= SIDEBAR ================= */
 
 .sidebar {
     width: 240px;
@@ -100,7 +99,6 @@ body {
     margin: 25px 5px;
 }
 
-/* ================= MAIN ================= */
 
 .main-content {
     margin-left: 240px;
@@ -129,7 +127,6 @@ h1 {
     margin-bottom: 30px;
 }
 
-/* ================= DASHBOARD CARDS ================= */
 
 .cards {
     display: grid;
@@ -186,7 +183,6 @@ h1 {
     -webkit-text-fill-color: transparent;
 }
 
-/* ================= CHARTS ================= */
 
 .chart-section {
     display: grid;
@@ -220,7 +216,7 @@ h1 {
     margin-bottom: 25px;
 }
 
-/* ================= BAR GRAPH ================= */
+
 
 .fake-chart {
     height: 220px;
@@ -277,7 +273,6 @@ h1 {
     margin-top: 12px;
 }
 
-/* ================= RISK ================= */
 
 .risk-box {
     text-align: center;
@@ -324,7 +319,6 @@ h1 {
     color: #c7b6ca;
 }
 
-/* ================= TABLE ================= */
 
 .student-section {
     overflow-x: auto;
@@ -369,9 +363,7 @@ td {
     border: 1px solid rgba(255, 20, 147, 0.2);
 }
 
-/* ================================================= */
-/* ================= COURSES ======================= */
-/* ================================================= */
+
 
 .course-grid {
     display: grid;
@@ -451,7 +443,7 @@ td {
     margin-bottom: 25px;
 }
 
-/* ================= COURSE STATS ================= */
+
 
 .course-stats {
     display: grid;
@@ -496,7 +488,7 @@ td {
     color: #88778c;
 }
 
-/* ================= VIEW COURSE ================= */
+
 
 .view-course {
     width: 100%;
@@ -527,9 +519,7 @@ td {
         0 0 20px rgba(255, 20, 147, 0.35);
 }
 
-/* ================================================= */
-/* ================= RESPONSIVE ==================== */
-/* ================================================= */
+
 
 @media (max-width: 1100px) {
 

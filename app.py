@@ -3,23 +3,12 @@ import pandas as pd
 
 app = Flask(__name__)
 
-
-# =========================================================
-# LOAD DATASET
-# =========================================================
-
 df = pd.read_csv("dataset/academic_data.csv")
 
-
-# Clean important text columns
 df["Student_ID"] = df["Student_ID"].astype(str).str.strip()
 df["Student_Name"] = df["Student_Name"].astype(str).str.strip()
 df["Course"] = df["Course"].astype(str).str.strip()
 
-
-# =========================================================
-# COURSE ORDER
-# =========================================================
 
 course_order = [
     "Machine Learning",
@@ -31,9 +20,6 @@ course_order = [
 ]
 
 
-# =========================================================
-# ACADEMIC SUPPORT CALCULATION
-# =========================================================
 
 def calculate_support(row):
 
@@ -73,10 +59,6 @@ df["Support_Level"] = df.apply(
 )
 
 
-# =========================================================
-# DASHBOARD
-# =========================================================
-
 @app.route("/")
 def dashboard():
 
@@ -110,10 +92,6 @@ def dashboard():
 
     courses_count = df["Course"].nunique()
 
-
-    # =====================================================
-    # STUDENT-LEVEL SUPPORT ANALYSIS
-    # =====================================================
 
     student_support = (
         df.groupby("Student_ID")["Support_Level"]
@@ -153,10 +131,6 @@ def dashboard():
     )
 
 
-    # =====================================================
-    # STUDENTS FOR FURTHER REVIEW
-    # =====================================================
-
     review_df = df[
         df["Support_Level"]
         == "Further Review"
@@ -176,10 +150,6 @@ def dashboard():
         )
     )
 
-
-    # =====================================================
-    # SEND DATA TO DASHBOARD
-    # =====================================================
 
     return render_template(
         "index.html",
@@ -210,9 +180,6 @@ def dashboard():
     )
 
 
-# =========================================================
-# COURSES PAGE
-# =========================================================
 
 @app.route("/courses")
 def courses():
@@ -261,10 +228,6 @@ def courses():
     )
 
 
-# =========================================================
-# COURSE MAP
-# =========================================================
-
 course_map = {
 
     "machine-learning":
@@ -285,11 +248,6 @@ course_map = {
     "data-science":
         "Data Science"
 }
-
-
-# =========================================================
-# COURSE DETAILS
-# =========================================================
 
 @app.route("/course/<course_slug>")
 def course_details(course_slug):
@@ -356,30 +314,19 @@ def course_details(course_slug):
     )
 
 
-# =========================================================
-# STUDENT DETAILS
-# =========================================================
-
 @app.route("/student/<student_id>")
 def student_details(student_id):
 
     # Clean URL ID
     student_id = str(student_id).strip()
 
-
-    # =====================================================
-    # GET ALL RECORDS OF THIS STUDENT
-    # =====================================================
+   
 
     student_data = df[
         df["Student_ID"].astype(str).str.strip()
         == student_id
     ].copy()
 
-
-    # =====================================================
-    # DEBUG INFORMATION
-    # =====================================================
 
     print("\n====================================")
     print("STUDENT ID:", student_id)
@@ -405,18 +352,10 @@ def student_details(student_id):
         return "Student not found", 404
 
 
-    # =====================================================
-    # STUDENT NAME
-    # =====================================================
-
     student_name = student_data.iloc[0][
         "Student_Name"
     ]
 
-
-    # =====================================================
-    # SORT SUBJECTS IN FIXED ORDER
-    # =====================================================
 
     student_data["Course"] = pd.Categorical(
         student_data["Course"],
@@ -430,18 +369,10 @@ def student_details(student_id):
     )
 
 
-    # =====================================================
-    # CONVERT ALL RECORDS TO DICTIONARY
-    # =====================================================
-
     student_data = student_data.to_dict(
         orient="records"
     )
 
-
-    # =====================================================
-    # SEND DATA TO HTML
-    # =====================================================
 
     return render_template(
         "student_details.html",
@@ -455,10 +386,6 @@ def student_details(student_id):
         course_order=course_order
     )
 
-
-# =========================================================
-# RUN APPLICATION
-# =========================================================
 
 if __name__ == "__main__":
     app.run(debug=True)

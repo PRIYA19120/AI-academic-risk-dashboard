@@ -385,6 +385,59 @@ def student_details(student_id):
 
         course_order=course_order
     )
+# ================= REPORTS PAGE =================
+
+@app.route("/reports")
+def reports():
+
+    report_data = []
+
+    for course in course_order:
+
+        course_df = df[df["Course"] == course]
+
+        if course_df.empty:
+            continue
+
+        report_data.append({
+            "course": course,
+            "students": course_df["Student_ID"].nunique(),
+            "avg_marks": round(
+                course_df["Final_Marks"].mean(), 1
+            ),
+            "attendance": round(
+                course_df["Attendance"].mean(), 1
+            ),
+            "assignment": round(
+                course_df["Assignment"].mean(), 1
+            ),
+            "quiz": round(
+                course_df["Quiz"].mean(), 1
+            )
+        })
+
+    return render_template(
+        "reports.html",
+        report_data=report_data,
+        total_students=df["Student_ID"].nunique(),
+        total_courses=df["Course"].nunique(),
+        overall_marks=round(df["Final_Marks"].mean(), 1),
+        overall_attendance=round(df["Attendance"].mean(), 1)
+    )
+@app.route("/students")
+def all_students():
+
+    students = (
+        df[["Student_ID", "Student_Name"]]
+        .drop_duplicates(subset=["Student_ID"])
+        .sort_values("Student_ID")
+        .to_dict(orient="records")
+    )
+
+    return render_template(
+        "students.html",
+        students=students
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | AI Academic Risk Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">🎓</div>
+        <h2>Academic Risk</h2>
+        <p>Student Support System</p>
+
+        <nav>
+            <a href="/" class="nav-item">Dashboard</a>
+            <a href="/courses" class="nav-item">Courses</a>
+            <a href="/reports" class="nav-item active">Reports</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <h1>Academic Reports</h1>
+        <p class="subtitle">Course performance and academic overview</p>
+
+        <section class="cards">
+            <div class="card">
+                <h3>Total Students</h3>
+                <h2>{{ total_students }}</h2>
+            </div>
+
+            <div class="card">
+                <h3>Total Courses</h3>
+                <h2>{{ total_courses }}</h2>
+            </div>
+
+            <div class="card">
+                <h3>Overall Average Marks</h3>
+                <h2>{{ overall_marks }}%</h2>
+            </div>
+
+            <div class="card">
+                <h3>Overall Attendance</h3>
+                <h2>{{ overall_attendance }}%</h2>
+            </div>
+        </section>
+
+        <section class="student-section">
+            <h2>Course Performance Report</h2>
+            <p class="subtitle">Average performance across all six courses</p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Students</th>
+                            <th>Average Marks</th>
+                            <th>Attendance</th>
+                            <th>Assignment</th>
+                            <th>Quiz</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for report in report_data %}
+                        <tr>
+                            <td>{{ report.course }}</td>
+                            <td>{{ report.students }}</td>
+                            <td>{{ report.avg_marks }}%</td>
+                            <td>{{ report.attendance }}%</td>
+                            <td>{{ report.assignment }}%</td>
+                            <td>{{ report.quiz }}%</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6">No report data available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <a href="/" class="view-course">← Back to Dashboard</a>
+    </main>
+
+</body>
+</html>

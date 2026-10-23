@@ -1,223 +1,285 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AI Academic Risk Dashboard</title>
+    <title>Academic Analytics Dashboard</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
+<div class="app-layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
-
-        <div class="logo">
-            🎓
+        <div class="brand">
+            <div class="brand-icon">A</div>
+            <div>
+                <h2>Acadex</h2>
+                <p>Student Analytics</p>
+            </div>
         </div>
 
-        <nav>
+        <p class="menu-label">MAIN MENU</p>
 
-            <a href="#" class="nav-item active">
-                <span>▣</span>
-                <span>Dashboard</span>
-            </a>
-
-            <a href="/courses" class="nav-item">
-                <span>▤</span>
-                <span>Courses</span>
-            </a>
-
-            <a href="/students" class="nav-item">
-                <span>♙</span>
-                <span>Students</span>
-            </a>
-
-            <a href="/reports" class="nav-item">
-                <span>▧</span>
-                <span>Reports</span>
-            </a>
-
-            <div class="sidebar-line"></div>
-
-            <a href="/settings" class="nav-item">
-                <span>⚙</span>
-                <span>Settings</span>
-            </a>
-
-            <a href="/profile" class="nav-item">
-                <span>♙</span>
-                <span>Profile</span>
-            </a>
-
+        <nav class="navigation">
+            <a href="/" class="nav-item active">▦ <span>Dashboard</span></a>
+            <a href="/courses" class="nav-item">▤ <span>Courses</span></a>
+            <a href="/students" class="nav-item">♙ <span>Students</span></a>
+            <a href="/reports" class="nav-item">▧ <span>Reports</span></a>
+         <a href="/profile" class="nav-item">▦ <span>Profile</span></a>
+         <a href="/settings" class="nav-item">▧ <span>Settings</span></a>
+        
+        
         </nav>
 
+        <div class="sidebar-bottom">
+            <div class="help-card">
+                <div class="help-icon">✦</div>
+                <h3>Academic Insights</h3>
+                <p>Review student performance and identify support needs.</p>
+            </div>
+        </div>
     </aside>
 
-
-    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-        <h1>Academic Risk Dashboard</h1>
+        <header class="topbar">
+            <div>
+                <h1>Dashboard Overview</h1>
+                <p class="subtitle">Welcome back! Here's your academic summary.</p>
+            </div>
 
-        <p class="subtitle">
-            Monitor student performance and identify students requiring academic support.
-        </p>
+            <div class="topbar-right">
+                <span class="online-indicator"></span>
+                <span>Academic Analytics</span>
+                <div class="profile-avatar">A</div>
+            </div>
+        </header>
 
-        <!-- DASHBOARD CARDS -->
-        <div class="cards">
+        <!-- STATISTICS CARDS -->
+        <section class="stats-grid">
 
-    <div class="card">
-        <h3>Total Students</h3>
-        <h2>{{ total_students }}</h2>
-    </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Total Students</span>
+                    <div class="stat-icon purple">♙</div>
+                </div>
+                <h2>{{ total_students }}</h2>
+                <p class="stat-note">Unique students analysed</p>
+            </div>
 
-    <div class="card">
-        <h3>Average Marks</h3>
-        <h2>{{ average_marks }}%</h2>
-    </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Average Marks</span>
+                    <div class="stat-icon blue">▥</div>
+                </div>
+                <h2>{{ average_marks }}<small>%</small></h2>
+                <p class="stat-note">Overall academic score</p>
+            </div>
 
-   <div class="card">
-    <h3>Low Support Need</h3>
-    <h2>{{ low_support }}</h2>
-</div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Average Attendance</span>
+                    <div class="stat-icon cyan">◷</div>
+                </div>
+                <h2>{{ average_attendance }}<small>%</small></h2>
+                <p class="stat-note">Across academic records</p>
+            </div>
 
-<div class="card">
-    <h3>Moderate Support</h3>
-    <h2>{{ moderate_support }}</h2>
-</div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>Total Courses</span>
+                    <div class="stat-icon pink">▤</div>
+                </div>
+                <h2>{{ courses_count }}</h2>
+                <p class="stat-note">Courses in the dataset</p>
+            </div>
 
-<div class="card">
-    <h3>Further Review</h3>
-    <h2>{{ further_review }}</h2>
-</div>
+        </section>
 
-</div>
+        <!-- CHARTS -->
+        <section class="analytics-grid">
 
-        <!-- CHART AREA -->
-        <div class="chart-section">
+            <div class="panel performance-panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Academic Performance</h2>
+                        <p>Average score across assessment components</p>
+                    </div>
+                    <span class="panel-badge">Overview</span>
+                </div>
 
-            <div class="chart-card performance-line-card">
+                <div class="performance-chart">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
 
-    <h2>Academic Performance</h2>
+            <div class="panel distribution-panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Student Support</h2>
+                        <p>Support category distribution</p>
+                    </div>
+                </div>
 
-    <p class="chart-subtitle">
-        Average performance across academic components
-    </p>
+                <div class="donut-container">
+                    <canvas id="supportChart"></canvas>
 
-    <div class="line-chart-container">
-        <canvas id="performanceChart"></canvas>
-    </div>
+                    <div class="donut-center">
+                        <h3>{{ total_students }}</h3>
+                        <p>Students</p>
+                    </div>
+                </div>
 
-</div>
+                <div class="legend-list">
+                    <div>
+                        <span class="legend-label">
+                            <i class="legend-dot low-dot"></i>
+                            Low Support Need
+                        </span>
+                        <strong>{{ low_support }}</strong>
+                    </div>
 
-            <div class="chart-card">
-    <h2>Support Distribution</h2>
+                    <div>
+                        <span class="legend-label">
+                            <i class="legend-dot moderate-dot"></i>
+                            Moderate Support
+                        </span>
+                        <strong>{{ moderate_support }}</strong>
+                    </div>
 
-    <div class="risk-box">
+                    <div>
+                        <span class="legend-label">
+                            <i class="legend-dot review-dot"></i>
+                            Further Review
+                        </span>
+                        <strong>{{ further_review }}</strong>
+                    </div>
+                </div>
+            </div>
 
-        <div class="risk-circle">
-            {{ total_students }}
-        </div>
+        </section>
 
-        <p>Students Analyzed</p>
+        <!-- SUPPORT SUMMARY -->
+        <section class="support-summary">
+            <div class="summary-heading">
+                <div>
+                    <h2>Student Support Summary</h2>
+                    <p>Students who may need academic attention</p>
+                </div>
+                <a href="/students" class="text-link">View all students →</a>
+            </div>
 
-        <div class="risk-info">
+            <div class="support-cards">
+                <div class="support-card">
+                    <div class="support-card-icon low-bg">✓</div>
+                    <div>
+                        <p>Low Support Need</p>
+                        <h3>{{ low_support }}</h3>
+                    </div>
+                </div>
 
-            <span>
-                ● Low Support Need: {{ low_support }}
-            </span>
+                <div class="support-card">
+                    <div class="support-card-icon moderate-bg">!</div>
+                    <div>
+                        <p>Moderate Support</p>
+                        <h3>{{ moderate_support }}</h3>
+                    </div>
+                </div>
 
-            <span>
-                ● Moderate Support: {{ moderate_support }}
-            </span>
-
-            <span>
-                ● Further Review: {{ further_review }}
-            </span>
-
-        </div>
-
-    </div>
-
-</div>
-        </div>
-
+                <div class="support-card">
+                    <div class="support-card-icon review-bg">↗</div>
+                    <div>
+                        <p>Further Review</p>
+                        <h3>{{ further_review }}</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- STUDENT TABLE -->
-        <div class="student-section">
+        <section class="panel table-panel">
+            <div class="panel-heading table-heading">
+                <div>
+                    <h2>Students Requiring Further Review</h2>
+                    <p>Students flagged by the current support rules</p>
+                </div>
+                <a href="/students" class="text-link">All students →</a>
+            </div>
 
-            <h2>Students Requiring Further Review</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STUDENT ID</th>
+                            <th>STUDENT NAME</th>
+                            <th>ATTENDANCE</th>
+                            <th>FINAL MARKS</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
 
-            <table>
+                    <tbody>
+                        {% for student in review_students %}
+                        <tr>
+                            <td class="student-id">
+                                {{ student["Student_ID"] }}
+                            </td>
 
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Student</th>
-                        <th>Attendance</th>
-                        <th>Marks</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
+                            <td>
+                                <div class="student-name">
+                                    <div class="student-avatar">
+                                        {{ student["Student_Name"][0] }}
+                                    </div>
+                                    {{ student["Student_Name"] }}
+                                </div>
+                            </td>
 
-<tbody>
+                            <td>{{ student["Attendance"] }}%</td>
+                            <td>{{ student["Final_Marks"] }}%</td>
 
-   {% for student in review_students %}
-<tr>
+                            <td>
+                                <span class="status-pill">Further Review</span>
+                            </td>
 
-    <td>
-        <a href="/student/{{ student['Student_ID'] }}" class="student-link">
-            {{ student["Student_ID"] }}
-        </a>
-    </td>
+                            <td>
+                                <a class="view-link"
+                                   href="/student/{{ student['Student_ID'] }}">
+                                    View Details →
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                No students currently require further review.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <td>
-        <a href="/student/{{ student['Student_ID'] }}" class="student-link">
-            {{ student["Student_Name"] }}
-        </a>
-    </td>
-
-    <td>{{ student["Attendance"] }}%</td>
-
-    <td>{{ student["Final_Marks"] }}%</td>
-
-    <td>
-        <a href="/student/{{ student['Student_ID'] }}" class="review-link">
-            <span class="status review">
-                Review →
-            </span>
-        </a>
-    </td>
-
-</tr>
-{% endfor %}
-</tbody>
-            </table>
-
-        </div>
+        <footer class="footer">
+            Academic Analytics Dashboard · Support categories use rule-based indicators.
+        </footer>
 
     </main>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    const ctx = document.getElementById('performanceChart');
-
-    new Chart(ctx, {
-        type: 'line',
+    new Chart(document.getElementById('performanceChart'), {
+        type: 'bar',
 
         data: {
-            labels: [
-                'Attendance',
-                'Assignment',
-                'Quiz',
-                'Internal',
-                'Exam'
-            ],
+            labels: ['Attendance', 'Assignment', 'Quiz', 'Internal', 'Exam'],
 
             datasets: [{
                 label: 'Average Performance',
@@ -230,29 +292,26 @@
                     {{ average_exam }}
                 ],
 
-                borderColor: '#c43cff',
-                backgroundColor: 'rgba(196, 60, 255, 0.12)',
+                backgroundColor: [
+                    '#8b78f9',
+                    '#69a9f7',
+                    '#53c7d9',
+                    '#ed91c5',
+                    '#a18af8'
+                ],
 
-                borderWidth: 3,
-
-                pointRadius: 5,
-                pointHoverRadius: 8,
-
-                tension: 0.4,
-
-                fill: true
+                borderRadius: 7,
+                borderSkipped: false,
+                maxBarThickness: 42
             }]
         },
 
         options: {
             responsive: true,
-
             maintainAspectRatio: false,
 
             plugins: {
-                legend: {
-                    display: false
-                }
+                legend: { display: false }
             },
 
             scales: {
@@ -261,17 +320,58 @@
                     max: 100,
 
                     ticks: {
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    }
+                        stepSize: 20,
+                        color: '#8490a7',
+                        callback: value => value + '%'
+                    },
+
+                    grid: { color: '#edf0f7' },
+                    border: { display: false }
                 },
 
                 x: {
-                    grid: {
-                        display: false
-                    }
+                    ticks: { color: '#65718a' },
+                    grid: { display: false },
+                    border: { display: false }
                 }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('supportChart'), {
+        type: 'doughnut',
+
+        data: {
+            labels: [
+                'Low Support Need',
+                'Moderate Support',
+                'Further Review'
+            ],
+
+            datasets: [{
+                data: [
+                    {{ low_support }},
+                    {{ moderate_support }},
+                    {{ further_review }}
+                ],
+
+                backgroundColor: [
+                    '#8b78f9',
+                    '#69a9f7',
+                    '#ed91c5'
+                ],
+
+                borderWidth: 0,
+                hoverOffset: 5
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '76%',
+            plugins: {
+                legend: { display: false }
             }
         }
     });

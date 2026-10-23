@@ -1,14 +1,19 @@
+
 from flask import Flask, render_template
 import pandas as pd
+import joblib
+from pathlib import Path
 
 app = Flask(__name__)
 
-df = pd.read_csv("dataset/academic_data.csv")
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = BASE_DIR / "dataset" / "academic_data.csv"
+MODEL_PATH = BASE_DIR / "model" / "academic_risk_model.pkl"
 
-df["Student_ID"] = df["Student_ID"].astype(str).str.strip()
-df["Student_Name"] = df["Student_Name"].astype(str).str.strip()
-df["Course"] = df["Course"].astype(str).str.strip()
+df = pd.read_csv(DATA_PATH)
 
+for column in ["Student_ID", "Student_Name", "Course"]:
+    df[column] = df[column].astype(str).str.strip()
 
 course_order = [
     "Machine Learning",
@@ -19,343 +24,158 @@ course_order = [
     "Data Science"
 ]
 
+df["Course"] = df["Course"].replace({
+    "machine learning": "Machine Learning",
+    "dbms": "DBMS",
+    "cloud computing": "Cloud Computing",
+    "data structures": "Data Structures",
+    "python": "Python",
+    "data science": "Data Science"
+})
 
+course_map = {
+    "machine-learning": "Machine Learning",
+    "dbms": "DBMS",
+    "cloud-computing": "Cloud Computing",
+    "data-structures": "Data Structures",
+    "python": "Python",
+    "data-science": "Data Science"
+}
 
-def calculate_support(row):
+model_data = joblib.load(MODEL_PATH)
+ml_model = model_data["model"]
+features = model_data["features"]
 
-    score = 0
-
-    # Attendance
-    if row["Attendance"] < 60:
-        score += 2
-    elif row["Attendance"] < 75:
-        score += 1
-
-    # Assignment
-    if row["Assignment"] < 50:
-        score += 2
-    elif row["Assignment"] < 70:
-        score += 1
-
-    # Final Marks
-    if row["Final_Marks"] < 50:
-        score += 2
-    elif row["Final_Marks"] < 65:
-        score += 1
-
-    # Support category
-    if score >= 4:
-        return "Further Review"
-    elif score >= 2:
-        return "Moderate Support"
-    else:
-        return "Low Support Need"
-
-
-# Apply support calculation
-df["Support_Level"] = df.apply(
-    calculate_support,
-    axis=1
-)
+df["Support_Level"] = ml_model.predict(df[features])
 
 
 @app.route("/")
 def dashboard():
+    total_students = int(df["Student_ID"].nunique())
 
-    # Unique students
-    total_students = df["Student_ID"].nunique()
-
-    # Overall averages
-    average_attendance = round(
-        df["Attendance"].mean(), 1
-    )
-
-    average_marks = round(
-        df["Final_Marks"].mean(), 1
-    )
-
-    average_assignment = round(
-        df["Assignment"].mean(), 1
-    )
-
-    average_quiz = round(
-        df["Quiz"].mean(), 1
-    )
-
-    average_internal = round(
-        df["Internal"].mean(), 1
-    )
-
-    average_exam = round(
-        df["Exam"].mean(), 1
-    )
-
-    courses_count = df["Course"].nunique()
-
+    average_attendance = round(df["Attendance"].mean(), 1)
+    average_marks = round(df["Final_Marks"].mean(), 1)
+    average_assignment = round(df["Assignment"].mean(), 1)
+    average_quiz = round(df["Quiz"].mean(), 1)
+    average_internal = round(df["Internal"].mean(), 1)
+    average_exam = round(df["Exam"].mean(), 1)
+    courses_count = int(df["Course"].nunique())
 
     student_support = (
         df.groupby("Student_ID")["Support_Level"]
         .apply(
-            lambda x:
+            lambda values:
                 "Further Review"
-                if "Further Review" in x.values
+                if "Further Review" in values.values
                 else (
                     "Moderate Support"
-                    if "Moderate Support" in x.values
+                    if "Moderate Support" in values.values
                     else "Low Support Need"
                 )
         )
     )
 
-
-    # Count unique students
     low_support = int(
-        (
-            student_support
-            == "Low Support Need"
-        ).sum()
+        (student_support == "Low Support Need").sum()
     )
-
     moderate_support = int(
-        (
-            student_support
-            == "Moderate Support"
-        ).sum()
+        (student_support == "Moderate Support").sum()
     )
-
     further_review = int(
-        (
-            student_support
-            == "Further Review"
-        ).sum()
+        (student_support == "Further Review").sum()
     )
-
 
     review_df = df[
-        df["Support_Level"]
-        == "Further Review"
+        df["Support_Level"] == "Further Review"
     ].copy()
 
-
-    # One student should appear only once
     review_students = (
-        review_df
-        .sort_values("Final_Marks")
-        .drop_duplicates(
-            subset=["Student_ID"]
-        )
+        review_df.sort_values("Final_Marks")
+        .drop_duplicates(subset=["Student_ID"])
         .head(10)
-        .to_dict(
-            orient="records"
-        )
+        .to_dict(orient="records")
     )
-
 
     return render_template(
         "index.html",
-
         total_students=total_students,
-
         average_attendance=average_attendance,
-
         average_marks=average_marks,
-
         average_assignment=average_assignment,
-
         average_quiz=average_quiz,
-
         average_internal=average_internal,
-
         average_exam=average_exam,
-
         courses_count=courses_count,
-
         low_support=low_support,
-
         moderate_support=moderate_support,
-
         further_review=further_review,
-
         review_students=review_students
     )
 
 
-
 @app.route("/courses")
 def courses():
-
     course_data = {}
 
-
     for course in course_order:
-
-        course_df = df[
-            df["Course"] == course
-        ]
+        course_df = df[df["Course"] == course].copy()
 
         if course_df.empty:
             continue
 
-
         course_data[course] = {
-
-            "students":
-                course_df[
-                    "Student_ID"
-                ].nunique(),
-
-            "avg_marks":
-                round(
-                    course_df[
-                        "Final_Marks"
-                    ].mean(),
-                    1
-                ),
-
-            "attendance":
-                round(
-                    course_df[
-                        "Attendance"
-                    ].mean(),
-                    1
-                )
+            "students": int(course_df["Student_ID"].nunique()),
+            "avg_marks": round(course_df["Final_Marks"].mean(), 1),
+            "attendance": round(course_df["Attendance"].mean(), 1)
         }
 
+    return render_template("courses.html", course_data=course_data)
 
-    return render_template(
-        "courses.html",
-        course_data=course_data
-    )
-
-
-course_map = {
-
-    "machine-learning":
-        "Machine Learning",
-
-    "dbms":
-        "DBMS",
-
-    "cloud-computing":
-        "Cloud Computing",
-
-    "data-structures":
-        "Data Structures",
-
-    "python":
-        "Python",
-
-    "data-science":
-        "Data Science"
-}
 
 @app.route("/course/<course_slug>")
 def course_details(course_slug):
+    course_name = course_map.get(course_slug)
 
-    if course_slug not in course_map:
-        return "Course not found", 404
+    if course_name is None:
+        return "Course not found. Please check the course link.", 404
 
-
-    course_name = course_map[
-        course_slug
-    ]
-
-
-    # Get course records
-    course_df = df[
-        df["Course"] == course_name
-    ].copy()
-
+    course_df = df[df["Course"] == course_name].copy()
 
     if course_df.empty:
-        return "Course data not found", 404
+        return f"No student records found for {course_name}.", 404
 
+    total_students = int(course_df["Student_ID"].nunique())
+    average_marks = round(course_df["Final_Marks"].mean(), 1)
+    average_attendance = round(course_df["Attendance"].mean(), 1)
 
-    # Course statistics
-    total_students = course_df[
-        "Student_ID"
-    ].nunique()
-
-
-    average_marks = round(
-        course_df[
-            "Final_Marks"
-        ].mean(),
-        1
+    students = (
+        course_df.sort_values("Student_Name")
+        .drop_duplicates(subset=["Student_ID"])
+        .to_dict(orient="records")
     )
-
-
-    average_attendance = round(
-        course_df[
-            "Attendance"
-        ].mean(),
-        1
-    )
-
-
-    # Actual student records
-    students = course_df.to_dict(
-        orient="records"
-    )
-
 
     return render_template(
         "course_details.html",
-
         course_name=course_name,
-
         total_students=total_students,
-
         average_marks=average_marks,
-
         average_attendance=average_attendance,
-
         students=students
     )
 
 
 @app.route("/student/<student_id>")
 def student_details(student_id):
-
-    # Clean URL ID
     student_id = str(student_id).strip()
 
-   
-
     student_data = df[
-        df["Student_ID"].astype(str).str.strip()
-        == student_id
+        df["Student_ID"] == student_id
     ].copy()
 
-
-    print("\n====================================")
-    print("STUDENT ID:", student_id)
-    print("RECORDS FOUND:", len(student_data))
-
-    if not student_data.empty:
-
-        print(
-            student_data[
-                [
-                    "Student_ID",
-                    "Student_Name",
-                    "Course"
-                ]
-            ].to_string(index=False)
-        )
-
-    print("====================================\n")
-
-
-    # Student not found
     if student_data.empty:
-        return "Student not found", 404
+        return "Student not found. Please check the Student ID.", 404
 
-
-    student_name = student_data.iloc[0][
-        "Student_Name"
-    ]
-
+    student_name = student_data.iloc[0]["Student_Name"]
 
     student_data["Course"] = pd.Categorical(
         student_data["Course"],
@@ -363,37 +183,24 @@ def student_details(student_id):
         ordered=True
     )
 
+    student_data = student_data.sort_values("Course")
 
-    student_data = student_data.sort_values(
-        "Course"
-    )
-
-
-    student_data = student_data.to_dict(
-        orient="records"
-    )
-
+    student_data = student_data.to_dict(orient="records")
 
     return render_template(
         "student_details.html",
-
         student_id=student_id,
-
         student_name=student_name,
-
         student_data=student_data,
-
         course_order=course_order
     )
-# ================= REPORTS PAGE =================
+
 
 @app.route("/reports")
 def reports():
-
     report_data = []
 
     for course in course_order:
-
         course_df = df[df["Course"] == course]
 
         if course_df.empty:
@@ -401,43 +208,33 @@ def reports():
 
         report_data.append({
             "course": course,
-            "students": course_df["Student_ID"].nunique(),
-            "avg_marks": round(
-                course_df["Final_Marks"].mean(), 1
-            ),
-            "attendance": round(
-                course_df["Attendance"].mean(), 1
-            ),
-            "assignment": round(
-                course_df["Assignment"].mean(), 1
-            ),
-            "quiz": round(
-                course_df["Quiz"].mean(), 1
-            )
+            "students": int(course_df["Student_ID"].nunique()),
+            "avg_marks": round(course_df["Final_Marks"].mean(), 1),
+            "attendance": round(course_df["Attendance"].mean(), 1),
+            "assignment": round(course_df["Assignment"].mean(), 1),
+            "quiz": round(course_df["Quiz"].mean(), 1)
         })
 
     return render_template(
         "reports.html",
         report_data=report_data,
-        total_students=df["Student_ID"].nunique(),
-        total_courses=df["Course"].nunique(),
+        total_students=int(df["Student_ID"].nunique()),
+        total_courses=int(df["Course"].nunique()),
         overall_marks=round(df["Final_Marks"].mean(), 1),
         overall_attendance=round(df["Attendance"].mean(), 1)
     )
+
+
 @app.route("/students")
 def all_students():
-
     students = (
         df[["Student_ID", "Student_Name"]]
         .drop_duplicates(subset=["Student_ID"])
-        .sort_values("Student_ID")
+        .sort_values("Student_Name")
         .to_dict(orient="records")
     )
 
-    return render_template(
-        "students.html",
-        students=students
-    )
+    return render_template("students.html", students=students)
 
 
 if __name__ == "__main__":

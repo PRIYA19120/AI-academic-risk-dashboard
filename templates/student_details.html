@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +40,6 @@
 
         .header h1 {
             margin: 0 0 8px;
-            color: #ffffff;
         }
 
         .header p {
@@ -49,7 +49,7 @@
 
         .subjects {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
@@ -68,7 +68,7 @@
 
         .marks {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
         }
 
@@ -76,17 +76,37 @@
             background: #18151d;
             padding: 12px;
             border-radius: 10px;
+            overflow-wrap: anywhere;
         }
 
         .mark span {
             display: block;
-            color: #918898;
+            color: #aaa0b5;
             font-size: 13px;
-            margin-bottom: 5px;
+            margin-bottom: 7px;
         }
 
         .mark strong {
-            font-size: 18px;
+            font-size: 17px;
+        }
+
+        .support {
+            margin-top: 15px;
+            padding: 14px;
+            background: #20152b;
+            border: 1px solid #65318a;
+            border-radius: 10px;
+        }
+
+        .support span {
+            display: block;
+            color: #c7a5dd;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .support strong {
+            color: #e2b5ff;
         }
 
         .chart-card {
@@ -103,7 +123,7 @@
 
         .chart-container {
             position: relative;
-            height: 380px;
+            height: 420px;
         }
 
         @media (max-width: 700px) {
@@ -114,12 +134,15 @@
             .subjects {
                 grid-template-columns: 1fr;
             }
+
+            .chart-container {
+                height: 500px;
+            }
         }
     </style>
 </head>
 
 <body>
-
 <div class="container">
 
     <a href="/" class="back">← Back to Dashboard</a>
@@ -130,15 +153,12 @@
     </div>
 
     <div class="subjects">
-
         {% for student in student_data %}
-
         <div class="subject-card">
 
             <h2>{{ student["Course"] }}</h2>
 
             <div class="marks">
-
                 <div class="mark">
                     <span>Attendance</span>
                     <strong>{{ student["Attendance"] }}%</strong>
@@ -168,100 +188,118 @@
                     <span>Final Marks</span>
                     <strong>{{ student["Final_Marks"] }}%</strong>
                 </div>
+            </div>
 
+            <div class="support">
+                <span>ML Predicted Support Level</span>
+                <strong>{{ student["Support_Level"] }}</strong>
             </div>
 
         </div>
-
         {% endfor %}
-
     </div>
 
-
     <div class="chart-card">
-
-        <h2>Subject-wise Performance</h2>
+        <h2>Subject-wise Academic Performance</h2>
 
         <div class="chart-container">
             <canvas id="studentChart"></canvas>
         </div>
-
     </div>
 
 </div>
 
-
 <script>
-
-    const labels = [
-        {% for student in student_data %}
-            "{{ student['Course'] }}",
-        {% endfor %}
-    ];
-
-    const finalMarks = [
-        {% for student in student_data %}
-            {{ student['Final_Marks'] }},
-        {% endfor %}
-    ];
+    const labels = {{ student_data | map(attribute='Course') | list | tojson }};
+    const attendance = {{ student_data | map(attribute='Attendance') | list | tojson }};
+    const assignments = {{ student_data | map(attribute='Assignment') | list | tojson }};
+    const quizzes = {{ student_data | map(attribute='Quiz') | list | tojson }};
+    const internals = {{ student_data | map(attribute='Internal') | list | tojson }};
+    const exams = {{ student_data | map(attribute='Exam') | list | tojson }};
+    const finalMarks = {{ student_data | map(attribute='Final_Marks') | list | tojson }};
 
     new Chart(document.getElementById("studentChart"), {
-
-        type: "line",
+        type: "bar",
 
         data: {
             labels: labels,
-
-            datasets: [{
-                label: "Final Marks",
-
-                data: finalMarks,
-
-                borderColor: "#c43cff",
-
-                backgroundColor: "rgba(196, 60, 255, 0.12)",
-
-                borderWidth: 3,
-
-                pointRadius: 6,
-
-                pointHoverRadius: 9,
-
-                tension: 0.4,
-
-                fill: true
-            }]
+            datasets: [
+                {
+                    label: "Attendance (%)",
+                    data: attendance,
+                    backgroundColor: "#8b5cf6"
+                },
+                {
+                    label: "Assignment (%)",
+                    data: assignments,
+                    backgroundColor: "#06b6d4"
+                },
+                {
+                    label: "Quiz (%)",
+                    data: quizzes,
+                    backgroundColor: "#f59e0b"
+                },
+                {
+                    label: "Internal (%)",
+                    data: internals,
+                    backgroundColor: "#ec4899"
+                },
+                {
+                    label: "Exam (%)",
+                    data: exams,
+                    backgroundColor: "#10b981"
+                },
+                {
+                    label: "Final Marks (%)",
+                    data: finalMarks,
+                    backgroundColor: "#c43cff"
+                }
+            ]
         },
 
         options: {
-
             responsive: true,
-
             maintainAspectRatio: false,
 
+            interaction: {
+                mode: "index",
+                intersect: false
+            },
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#ffffff"
+                    }
+                }
+            },
+
             scales: {
+                x: {
+                    ticks: {
+                        color: "#ffffff"
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
 
                 y: {
                     beginAtZero: true,
                     max: 100,
-
                     ticks: {
+                        color: "#ffffff",
                         callback: function(value) {
                             return value + "%";
                         }
-                    }
-                },
-
-                x: {
+                    },
                     grid: {
-                        display: false
+                        color: "#292431"
                     }
                 }
             }
         }
-
     });
-
 </script>
 
 </body>

@@ -190,7 +190,7 @@
                 </div>
             </div>
 
-            <div class="support">
+            <div class="support {{ student['Support_Level'] | lower | replace(' ', '-') }}">
                 <span>ML Predicted Support Level</span>
                 <strong>{{ student["Support_Level"] }}</strong>
             </div>

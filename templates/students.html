@@ -1,36 +1,113 @@
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students | AI Academic Risk Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .student-filters {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin: 22px 0;
+            align-items: center;
+        }
+
+        .student-filters input,
+        .student-filters select {
+            flex: 1;
+            min-width: 180px;
+            padding: 13px 15px;
+            border: 1px solid #3b2b4d;
+            border-radius: 10px;
+            background: #171422;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .student-filters input:focus,
+        .student-filters select:focus {
+            border-color: #c43cff;
+        }
+
+        .filter-btn,
+        .clear-btn {
+            display: inline-block;
+            padding: 13px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .filter-btn {
+            background: #a855f7;
+            color: white;
+        }
+
+        .clear-btn {
+            background: #272033;
+            color: #d8c9e8;
+        }
+
+        .student-count {
+            color: #aaa0b5;
+            margin: 12px 0 18px;
+            font-size: 14px;
+        }
+
+        .student-link,
+        .view-course {
+            text-decoration: none;
+        }
+
+        .student-link {
+            color: #d8a4ff;
+        }
+
+        .view-course {
+            color: #c43cff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .student-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .student-filters input,
+            .student-filters select,
+            .filter-btn,
+            .clear-btn {
+                box-sizing: border-box;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
     <aside class="sidebar">
         <div class="logo">🎓</div>
-
         <nav>
             <a href="/" class="nav-item">
                 <span>▣</span>
                 <span>Dashboard</span>
             </a>
-
             <a href="/courses" class="nav-item">
                 <span>▤</span>
                 <span>Courses</span>
             </a>
-
             <a href="/students" class="nav-item active">
                 <span>♙</span>
                 <span>Students</span>
             </a>
-
             <a href="/reports" class="nav-item">
                 <span>▧</span>
                 <span>Reports</span>
@@ -39,15 +116,42 @@
     </aside>
 
     <main class="main-content">
-
         <h1>All Students</h1>
         <p class="subtitle">
             View student profiles and subject-wise academic performance.
         </p>
 
         <section class="student-section">
-
             <h2>Student Directory</h2>
+
+            <form class="student-filters" action="/students" method="GET">
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Search by student name or ID..."
+                    value="{{ search_query }}"
+                    aria-label="Search by student name or ID"
+                >
+
+                <select name="course" aria-label="Filter by course">
+                    <option value="">All Courses</option>
+                    {% for course in course_order %}
+                    <option
+                        value="{{ course }}"
+                        {% if selected_course == course %}selected{% endif %}
+                    >
+                        {{ course }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="filter-btn">Search & Filter</button>
+                <a href="/students" class="clear-btn">Clear</a>
+            </form>
+
+            <p class="student-count">
+                Showing {{ students | length }} student(s)
+            </p>
 
             <table>
                 <thead>
@@ -57,37 +161,35 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {% for student in students %}
                     <tr>
                         <td>{{ student["Student_ID"] }}</td>
-
                         <td>
-                            <a href="/student/{{ student['Student_ID'] }}"
-                               class="student-link">
+                            <a
+                                href="{{ url_for('student_details', student_id=student['Student_ID']) }}"
+                                class="student-link"
+                            >
                                 {{ student["Student_Name"] }}
                             </a>
                         </td>
-
                         <td>
-                            <a href="/student/{{ student['Student_ID'] }}"
-                               class="view-course">
+                            <a
+                                href="{{ url_for('student_details', student_id=student['Student_ID']) }}"
+                                class="view-course"
+                            >
                                 View Details →
                             </a>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="3">No students found.</td>
+                        <td colspan="3">No matching students found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
         </section>
-
     </main>
-
 </body>
 </html>

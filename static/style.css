@@ -1482,3 +1482,29 @@ body {
 .stat-value {
     color: #d8b4fe !important;
 }
+.subjects {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.subject-card {
+    min-width: 0;
+    box-sizing: border-box;
+    background: #111118;
+    border: 1px solid #2b2035;
+    border-radius: 16px;
+    padding: 20px;
+}
+/* Support card names */
+.support-cards .support-card p {
+    color: #332344 !important;
+    font-weight: 600;
+}
+
+/* Support card numbers */
+.support-cards .support-card h3 {
+    color: #000000 !important;
+}

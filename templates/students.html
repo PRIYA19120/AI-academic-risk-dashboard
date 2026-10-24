@@ -1,13 +1,20 @@
- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students | AI Academic Risk Dashboard</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
+        .student-section {
+            width: 100%;
+            min-width: 0;
+            overflow: hidden;
+        }
+
         .student-filters {
             display: flex;
             gap: 14px;
@@ -34,6 +41,11 @@
             border-color: #c43cff;
         }
 
+        .student-filters select option {
+            background: #171422;
+            color: #ffffff;
+        }
+
         .filter-btn,
         .clear-btn {
             display: inline-block;
@@ -43,6 +55,8 @@
             font-size: 14px;
             cursor: pointer;
             border: none;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .filter-btn {
@@ -50,9 +64,17 @@
             color: white;
         }
 
+        .filter-btn:hover {
+            background: #9333ea;
+        }
+
         .clear-btn {
             background: #272033;
             color: #d8c9e8;
+        }
+
+        .clear-btn:hover {
+            background: #382b49;
         }
 
         .student-count {
@@ -61,21 +83,87 @@
             font-size: 14px;
         }
 
-        .student-link,
-        .view-course {
-            text-decoration: none;
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #2b2035;
+            border-radius: 12px;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .student-table th,
+        .student-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #2b2035;
+            vertical-align: middle;
+        }
+
+        .student-table th {
+            background: #171422;
+            color: #cdb8e5;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .student-table td {
+            color: #e8e1ef;
+            font-size: 14px;
+        }
+
+        .student-table tbody tr {
+            background: #111118;
+            transition: background 0.2s ease;
+        }
+
+        .student-table tbody tr:hover {
+            background: #1b1625;
+        }
+
+        .student-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .student-id {
+            color: #aaa0b5 !important;
+            white-space: nowrap;
         }
 
         .student-link {
             color: #d8a4ff;
-        }
-
-        .view-course {
-            color: #c43cff;
+            text-decoration: none;
             font-weight: 600;
         }
 
-        @media (max-width: 600px) {
+        .student-link:hover {
+            color: #edcaff;
+            text-decoration: underline;
+        }
+
+        .view-course {
+            display: inline-block;
+            color: #c43cff;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .view-course:hover {
+            color: #e2b5ff;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #aaa0b5 !important;
+            padding: 30px !important;
+        }
+
+        @media (max-width: 700px) {
             .student-filters {
                 flex-direction: column;
                 align-items: stretch;
@@ -87,27 +175,38 @@
             .clear-btn {
                 box-sizing: border-box;
                 width: 100%;
+                min-width: 0;
+            }
+
+            .student-table th,
+            .student-table td {
+                padding: 13px 12px;
             }
         }
     </style>
 </head>
 
 <body>
+
     <aside class="sidebar">
         <div class="logo">🎓</div>
+
         <nav>
             <a href="/" class="nav-item">
                 <span>▣</span>
                 <span>Dashboard</span>
             </a>
+
             <a href="/courses" class="nav-item">
                 <span>▤</span>
                 <span>Courses</span>
             </a>
+
             <a href="/students" class="nav-item active">
                 <span>♙</span>
                 <span>Students</span>
             </a>
+
             <a href="/reports" class="nav-item">
                 <span>▧</span>
                 <span>Reports</span>
@@ -116,25 +215,30 @@
     </aside>
 
     <main class="main-content">
+
         <h1>All Students</h1>
+
         <p class="subtitle">
             View student profiles and subject-wise academic performance.
         </p>
 
         <section class="student-section">
+
             <h2>Student Directory</h2>
 
             <form class="student-filters" action="/students" method="GET">
+
                 <input
                     type="text"
                     name="q"
                     placeholder="Search by student name or ID..."
-                    value="{{ search_query }}"
+                    value="{{ search_query | default('') }}"
                     aria-label="Search by student name or ID"
                 >
 
                 <select name="course" aria-label="Filter by course">
                     <option value="">All Courses</option>
+
                     {% for course in course_order %}
                     <option
                         value="{{ course }}"
@@ -145,51 +249,67 @@
                     {% endfor %}
                 </select>
 
-                <button type="submit" class="filter-btn">Search & Filter</button>
+                <button type="submit" class="filter-btn">
+                    Search &amp; Filter
+                </button>
+
                 <a href="/students" class="clear-btn">Clear</a>
+
             </form>
 
             <p class="student-count">
                 Showing {{ students | length }} student(s)
             </p>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Student Name</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                    <tr>
-                        <td>{{ student["Student_ID"] }}</td>
-                        <td>
-                            <a
-                                href="{{ url_for('student_details', student_id=student['Student_ID']) }}"
-                                class="student-link"
-                            >
-                                {{ student["Student_Name"] }}
-                            </a>
-                        </td>
-                        <td>
-                            <a
-                                href="{{ url_for('student_details', student_id=student['Student_ID']) }}"
-                                class="view-course"
-                            >
-                                View Details →
-                            </a>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="3">No matching students found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-wrapper">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td class="student-id">
+                                {{ student["Student_ID"] }}
+                            </td>
+
+                            <td>
+                                <a
+                                    href="/student/{{ student['Student_ID'] }}"
+                                    class="student-link"
+                                >
+                                    {{ student["Student_Name"] }}
+                                </a>
+                            </td>
+
+                            <td>
+                                <a
+                                    href="/student/{{ student['Student_ID'] }}"
+                                    class="view-course"
+                                >
+                                    View Details →
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="empty-state">
+                                No matching students found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
         </section>
+
     </main>
+
 </body>
 </html>

@@ -1,9 +1,14 @@
-
 from flask import Flask, render_template, request
-import pandas as pd
-import joblib
-
 from pathlib import Path
+import hashlib
+import joblib
+import numpy as np
+import pandas as pd
+
+from sklearn.ensemble import IsolationForest
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
 
@@ -39,47 +44,25 @@ course_map = {
 }
 
 course_names = {
-    course.lower(): course
-    for course in course_order
+    course.lower(): course for course in course_order
 }
 
-
-def assign_support(row):
-    score = 0
-    valid_values = 0
-
-    for column in FEATURES:
-        value = pd.to_numeric(
-            row[column], errors="coerce"
-        )
-
-        if pd.isna(value):
-            continue
-
-        valid_values += 1
-
-        if value < 55:
-            score += 2
-        elif value < 70:
-            score += 1
-
-    if valid_values == 0:
-        return "Moderate Support"
-
-    if score >= 6:
-        return "Further Review"
-    elif score >= 3:
-        return "Moderate Support"
-    else:
-        return "Low Support Need"
+df = pd.DataFrame()
+ml_model = None
+dataset_signature = None
 
 
-def load_dataset():
+def get_dataset_signature():
     if not DATA_PATH.exists():
         raise FileNotFoundError(
             f"Dataset file not found: {DATA_PATH}"
         )
 
+    content = DATA_PATH.read_bytes()
+    return hashlib.sha256(content).hexdigest()
+
+
+def load_dataset():
     data = pd.read_csv(DATA_PATH)
 
     required_columns = [
@@ -88,18 +71,20 @@ def load_dataset():
         "Course"
     ] + FEATURES
 
-    missing_columns = [
+    missing = [
         column for column in required_columns
         if column not in data.columns
     ]
 
-    if missing_columns:
+    if missing:
         raise ValueError(
-            "CSV mein ye required columns missing hain: "
-            + ", ".join(missing_columns)
+            "CSV mein required columns missing hain: "
+            + ", ".join(missing)
         )
 
-    for column in ["Student_ID", "Student_Name", "Course"]:
+    for column in [
+        "Student_ID", "Student_Name", "Course"
+    ]:
         data[column] = (
             data[column]
             .fillna("")
@@ -119,8 +104,7 @@ def load_dataset():
         )
 
     data[FEATURES] = data[FEATURES].replace(
-        [float("inf"), float("-inf")],
-        float("nan")
+        [np.inf, -np.inf], np.nan
     )
 
     data["Course"] = data["Course"].apply(
@@ -130,155 +114,145 @@ def load_dataset():
     )
 
     if data.empty:
+        raise ValueError("CSV mein valid records nahi hain.")
+
+    if data[FEATURES].notna().sum().sum() == 0:
         raise ValueError(
-            "CSV mein koi valid student record nahi mila."
+            "CSV mein koi valid academic metric nahi hai."
         )
 
     return data
 
 
-def load_ml_model():
-    if not MODEL_PATH.exists():
-        print(
-            "WARNING: Trained model nahi mila. "
-            "Abhi rule-based fallback use hoga."
+def train_anomaly_model(data):
+    global ml_model
+
+    if len(data) < 2:
+        raise ValueError(
+            "ML model train karne ke liye kam se kam "
+            "2 valid records chahiye."
         )
-        return None
 
-    try:
-        saved_data = joblib.load(MODEL_PATH)
+    model = Pipeline([
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler()),
+        ("detector", IsolationForest(
+            n_estimators=200,
+            contamination=0.10,
+            random_state=42
+        ))
+    ])
 
-        model = saved_data["model"]
-        features = saved_data.get("features", FEATURES)
+    model.fit(data[FEATURES])
 
-        if not all(
-            feature in FEATURES for feature in features
-        ):
-            print(
-                "WARNING: Model features match nahi karte. "
-                "Rule-based fallback use hoga."
-            )
-            return None
+    MODEL_PATH.parent.mkdir(
+        parents=True, exist_ok=True
+    )
 
-        return {
-            "model": model,
-            "features": features
-        }
+    ml_model = model
 
-    except Exception as error:
-        print("WARNING: Model load nahi hua:", error)
-        print("Rule-based fallback use hoga.")
-        return None
+    joblib.dump({
+        "model": model,
+        "features": FEATURES,
+        "model_type": "IsolationForest",
+        "dataset_signature": get_dataset_signature()
+    }, MODEL_PATH)
 
-
-df = load_dataset()
-ml_model = load_ml_model()
+    print("Anomaly detection model trained and saved.")
 
 
-def update_support_levels():
+def update_predictions():
     global df
 
-    if ml_model is not None:
-        try:
-            features = ml_model["features"]
-            predictions = ml_model["model"].predict(
-                df[features]
-            )
+    if ml_model is None:
+        raise RuntimeError("ML model available nahi hai.")
 
-            df["Support_Level"] = predictions
+    features = df[FEATURES]
 
-            print("Support levels: ML model se predict hue.")
+    predictions = ml_model.predict(features)
+    anomaly_scores = ml_model.decision_function(features)
 
-        except Exception as error:
-            print("WARNING: ML prediction failed:", error)
+    df["Anomaly_Score"] = anomaly_scores
+    df["Academic_Risk_Flag"] = np.where(
+        predictions == -1,
+        "Potential Anomaly",
+        "No Anomaly Detected"
+    )
 
-            df["Support_Level"] = df.apply(
-                assign_support, axis=1
-            )
+    # Lower anomaly score means a more unusual record.
+    # These are relative categories, not verified support needs.
+    low_threshold = np.quantile(anomaly_scores, 0.10)
+    moderate_threshold = np.quantile(anomaly_scores, 0.30)
 
-            print("Rule-based fallback use hua.")
+    df["Support_Level"] = np.select(
+        [
+            anomaly_scores <= low_threshold,
+            anomaly_scores <= moderate_threshold
+        ],
+        [
+            "Further Review",
+            "Moderate Support"
+        ],
+        default="Low Support Need"
+    )
 
-    else:
-        df["Support_Level"] = df.apply(
-            assign_support, axis=1
-        )
-
-        print("Support levels: Rule-based fallback.")
-
+    print("Predictions updated using Isolation Forest.")
     return df
 
 
-update_support_levels()
+def refresh_dataset():
+    global df, dataset_signature
+
+    current_signature = get_dataset_signature()
+
+    if current_signature != dataset_signature:
+        print("Dataset change detected. Refreshing model...")
+
+        new_data = load_dataset()
+
+        # Train on the latest CSV whenever its contents change.
+        train_anomaly_model(new_data)
+
+        df = new_data
+        dataset_signature = current_signature
+
+        update_predictions()
 
 
-def get_support_counts(support_series):
+def initialize_app():
+    global df, dataset_signature, ml_model
+
+    df = load_dataset()
+    signature = get_dataset_signature()
+
+    # Train a fresh anomaly model on the current dataset.
+    # This also replaces an older rule-label classifier.
+    train_anomaly_model(df)
+
+    dataset_signature = signature
+    update_predictions()
+
+
+@app.before_request
+def refresh_before_request():
+    refresh_dataset()
+
+
+def get_support_counts(series):
     return {
-        "low": int(
-            (support_series == "Low Support Need").sum()
-        ),
-        "moderate": int(
-            (support_series == "Moderate Support").sum()
-        ),
-        "further": int(
-            (support_series == "Further Review").sum()
-        )
+        "low": int((series == "Low Support Need").sum()),
+        "moderate": int((series == "Moderate Support").sum()),
+        "further": int((series == "Further Review").sum())
     }
-
-
-def get_course_support_counts():
-    return get_support_counts(df["Support_Level"])
-
-
-def get_model_evaluation():
-    model_accuracy = None
-    evaluation_report = {}
-
-    try:
-        saved_model = joblib.load(MODEL_PATH)
-
-        if "test_accuracy" in saved_model:
-            model_accuracy = round(
-                saved_model["test_accuracy"] * 100, 2
-            )
-
-        evaluation_report = saved_model.get(
-            "classification_report", {}
-        )
-
-    except (FileNotFoundError, KeyError, ValueError, TypeError) as error:
-        print("Model evaluation data unavailable:", error)
-
-    return model_accuracy, evaluation_report
 
 
 @app.route("/")
 def dashboard():
-    total_students = int(df["Student_ID"].nunique())
-    courses_count = int(df["Course"].nunique())
-
-    average_attendance = round(
-        df["Attendance"].mean(), 1
-    )
-    average_marks = round(
-        df["Final_Marks"].mean(), 1
-    )
-    average_assignment = round(
-        df["Assignment"].mean(), 1
-    )
-    average_quiz = round(df["Quiz"].mean(), 1)
-    average_internal = round(df["Internal"].mean(), 1)
-    average_exam = round(df["Exam"].mean(), 1)
-
-    counts = get_course_support_counts()
-
-    review_df = df[
-        df["Support_Level"] == "Further Review"
-    ].copy()
+    counts = get_support_counts(df["Support_Level"])
 
     review_students = (
-        review_df.sort_values(
-            "Final_Marks", na_position="last"
-        )
+        df[df["Support_Level"] == "Further Review"]
+        .sort_values("Anomaly_Score")
         .drop_duplicates(subset=["Student_ID"])
         .head(10)
         .to_dict(orient="records")
@@ -286,14 +260,14 @@ def dashboard():
 
     return render_template(
         "index.html",
-        total_students=total_students,
-        average_attendance=average_attendance,
-        average_marks=average_marks,
-        average_assignment=average_assignment,
-        average_quiz=average_quiz,
-        average_internal=average_internal,
-        average_exam=average_exam,
-        courses_count=courses_count,
+        total_students=int(df["Student_ID"].nunique()),
+        courses_count=int(df["Course"].nunique()),
+        average_attendance=round(df["Attendance"].mean(), 1),
+        average_marks=round(df["Final_Marks"].mean(), 1),
+        average_assignment=round(df["Assignment"].mean(), 1),
+        average_quiz=round(df["Quiz"].mean(), 1),
+        average_internal=round(df["Internal"].mean(), 1),
+        average_exam=round(df["Exam"].mean(), 1),
         low_support=counts["low"],
         moderate_support=counts["moderate"],
         further_review=counts["further"],
@@ -306,21 +280,15 @@ def courses():
     course_data = {}
 
     for course in course_order:
-        course_df = df[df["Course"] == course].copy()
+        course_df = df[df["Course"] == course]
 
         if course_df.empty:
             continue
 
         course_data[course] = {
-            "students": int(
-                course_df["Student_ID"].nunique()
-            ),
-            "avg_marks": round(
-                course_df["Final_Marks"].mean(), 1
-            ),
-            "attendance": round(
-                course_df["Attendance"].mean(), 1
-            )
+            "students": int(course_df["Student_ID"].nunique()),
+            "avg_marks": round(course_df["Final_Marks"].mean(), 1),
+            "attendance": round(course_df["Attendance"].mean(), 1)
         }
 
     return render_template(
@@ -334,30 +302,12 @@ def course_details(course_slug):
     course_name = course_map.get(course_slug)
 
     if course_name is None:
-        return (
-            "Course not found. Please check the course link.",
-            404
-        )
+        return "Course not found.", 404
 
-    course_df = df[
-        df["Course"] == course_name
-    ].copy()
+    course_df = df[df["Course"] == course_name].copy()
 
     if course_df.empty:
-        return (
-            f"No student records found for {course_name}.",
-            404
-        )
-
-    total_students = int(
-        course_df["Student_ID"].nunique()
-    )
-    average_marks = round(
-        course_df["Final_Marks"].mean(), 1
-    )
-    average_attendance = round(
-        course_df["Attendance"].mean(), 1
-    )
+        return "No student records found for this course.", 404
 
     students = (
         course_df.sort_values("Student_Name")
@@ -368,26 +318,21 @@ def course_details(course_slug):
     return render_template(
         "course_details.html",
         course_name=course_name,
-        total_students=total_students,
-        average_marks=average_marks,
-        average_attendance=average_attendance,
+        total_students=int(course_df["Student_ID"].nunique()),
+        average_marks=round(course_df["Final_Marks"].mean(), 1),
+        average_attendance=round(course_df["Attendance"].mean(), 1),
         students=students
     )
 
 
 @app.route("/student/<student_id>")
 def student_details(student_id):
-    student_id = str(student_id).strip()
-
     student_data = df[
-        df["Student_ID"] == student_id
+        df["Student_ID"] == str(student_id).strip()
     ].copy()
 
     if student_data.empty:
-        return (
-            "Student not found. Please check the Student ID.",
-            404
-        )
+        return "Student not found.", 404
 
     student_name = student_data.iloc[0]["Student_Name"]
 
@@ -398,15 +343,12 @@ def student_details(student_id):
     )
 
     student_data = student_data.sort_values("Course")
-    student_data = student_data.to_dict(
-        orient="records"
-    )
 
     return render_template(
         "student_details.html",
         student_id=student_id,
         student_name=student_name,
-        student_data=student_data,
+        student_data=student_data.to_dict(orient="records"),
         course_order=course_order
     )
 
@@ -423,24 +365,14 @@ def reports():
 
         report_data.append({
             "course": course,
-            "students": int(
-                course_df["Student_ID"].nunique()
-            ),
-            "avg_marks": round(
-                course_df["Final_Marks"].mean(), 1
-            ),
-            "attendance": round(
-                course_df["Attendance"].mean(), 1
-            ),
-            "assignment": round(
-                course_df["Assignment"].mean(), 1
-            ),
-            "quiz": round(
-                course_df["Quiz"].mean(), 1
-            )
+            "students": int(course_df["Student_ID"].nunique()),
+            "avg_marks": round(course_df["Final_Marks"].mean(), 1),
+            "attendance": round(course_df["Attendance"].mean(), 1),
+            "assignment": round(course_df["Assignment"].mean(), 1),
+            "quiz": round(course_df["Quiz"].mean(), 1)
         })
 
-    counts = get_course_support_counts()
+    counts = get_support_counts(df["Support_Level"])
 
     student_report_data = df[
         [
@@ -449,29 +381,20 @@ def reports():
             "Course",
             "Attendance",
             "Final_Marks",
-            "Support_Level"
+            "Support_Level",
+            "Academic_Risk_Flag"
         ]
-    ].copy()
-
-    student_report_data = student_report_data.sort_values(
+    ].sort_values(
         ["Student_Name", "Course"]
     ).to_dict(orient="records")
-
-    model_accuracy, evaluation_report = get_model_evaluation()
 
     return render_template(
         "reports.html",
         report_data=report_data,
-        total_students=int(
-            df["Student_ID"].nunique()
-        ),
+        total_students=int(df["Student_ID"].nunique()),
         total_courses=int(df["Course"].nunique()),
-        overall_marks=round(
-            df["Final_Marks"].mean(), 1
-        ),
-        overall_attendance=round(
-            df["Attendance"].mean(), 1
-        ),
+        overall_marks=round(df["Final_Marks"].mean(), 1),
+        overall_attendance=round(df["Attendance"].mean(), 1),
         low_support_count=counts["low"],
         moderate_support_count=counts["moderate"],
         further_review_count=counts["further"],
@@ -479,20 +402,16 @@ def reports():
         course_moderate_count=counts["moderate"],
         course_further_count=counts["further"],
         student_report_data=student_report_data,
-        model_accuracy=model_accuracy,
-        evaluation_report=evaluation_report
+        model_accuracy=None,
+        evaluation_report={},
+        anomaly_model=True
     )
 
 
 @app.route("/students")
 def all_students():
-    search_query = request.args.get(
-        "q", ""
-    ).strip()
-
-    selected_course = request.args.get(
-        "course", ""
-    ).strip()
+    search_query = request.args.get("q", "").strip()
+    selected_course = request.args.get("course", "").strip()
 
     student_df = df[
         ["Student_ID", "Student_Name", "Course"]
@@ -508,17 +427,11 @@ def all_students():
     if search_query:
         student_df = student_df[
             student_df["Student_ID"].str.contains(
-                search_query,
-                case=False,
-                na=False,
-                regex=False
+                search_query, case=False, na=False, regex=False
             )
             |
             student_df["Student_Name"].str.contains(
-                search_query,
-                case=False,
-                na=False,
-                regex=False
+                search_query, case=False, na=False, regex=False
             )
         ]
 
@@ -536,6 +449,8 @@ def all_students():
         selected_course=selected_course
     )
 
+
+initialize_app()
 
 if __name__ == "__main__":
     app.run(debug=True)

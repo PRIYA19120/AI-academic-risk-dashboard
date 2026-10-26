@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -247,60 +246,47 @@
         </section>
         
 <section class="report-section">
-    <h2>Machine Learning Model Evaluation</h2>
-    <p class="description">
-        Performance on held-out test records. Labels are generated using the project's scoring rules.
-    </p>
+    
+        <section class="report-section">
+            <h2>ML Anomaly Detection</h2>
+            <p class="description">
+                 Academic records flagged by the machine learning model for review
+            </p>
 
-    <div class="report-grid">
-        <div class="report-card purple">
-            <h3>Test Accuracy</h3>
-            <span class="number">
-                {% if model_accuracy is not none %}
-                    {{ model_accuracy }}%
-                {% else %}
-                    N/A
-                {% endif %}
-            </span>
-            <span class="note">Accuracy on test records</span>
-        </div>
+            <div class="report-grid">
+                <div class="report-card purple">
+                    <h3>ML Model</h3>
+                    <span class="number" style="font-size: 24px;">
+                        Isolation Forest
+                    </span>
+                    <span class="note">Unsupervised machine learning</span>
+                </div>
 
-        {% for label, title in [
-            ("Low Support Need", "Low Support"),
-            ("Moderate Support", "Moderate Support"),
-            ("Further Review", "Further Review")
-        ] %}
-        <div class="report-card blue">
-            <h3>{{ title }} F1-score</h3>
-            <span class="number">
-                {% if evaluation_report.get(label) %}
-                    {{ (evaluation_report[label]["f1-score"] * 100) | round(1) }}%
-                {% else %}
-                    N/A
-                {% endif %}
-            </span>
-            <span class="note">
-                Precision:
-                {% if evaluation_report.get(label) %}
-                    {{ (evaluation_report[label]["precision"] * 100) | round(1) }}%
-                {% else %}
-                    N/A
-                {% endif %}
-                · Recall:
-                {% if evaluation_report.get(label) %}
-                    {{ (evaluation_report[label]["recall"] * 100) | round(1) }}%
-                {% else %}
-                    N/A
-                {% endif %}
-            </span>
-        </div>
-        {% endfor %}
-    </div>
-</section>
+                <div class="report-card blue">
+                    <h3>Records Analysed</h3>
+                    <span class="number">{{ student_report_data|length }}</span>
+                    <span class="note">Academic course records analysed</span>
+                </div>
+
+                <div class="report-card pink">
+                    <h3>Potential Anomalies</h3>
+                    <span class="number">
+                        {{ student_report_data
+                           |selectattr("Academic_Risk_Flag", "equalto", "Potential Anomaly")
+                           |list|length }}
+                    </span>
+                    <span class="note">Records flagged for further review</span>
+                </div>
+            </div>
+        </section>
+
 
 
         <h2 class="support-heading">Student Support Overview</h2>
-        <p class="subtitle">Support categories predicted by the machine learning model</p>
+
+<p class="subtitle">
+    Relative support bands derived from anomaly scores; review results before taking action
+</p>
 
         <section class="support-grid">
             <div class="report-card support-low">
@@ -389,7 +375,7 @@
                             <th>Course</th>
                             <th>Attendance</th>
                             <th>Final Marks</th>
-                            <th>Predicted Support</th>
+                            <th>ML Anomaly Detection</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -400,7 +386,7 @@
                             <td>{{ student.Course }}</td>
                             <td>{{ student.Attendance }}%</td>
                             <td>{{ student.Final_Marks }}%</td>
-                            <td>{{ student.Support_Level }}</td>
+                            <td>{{ student.Academic_Risk_Flag }}</td>
                         </tr>
                         {% else %}
                         <tr>

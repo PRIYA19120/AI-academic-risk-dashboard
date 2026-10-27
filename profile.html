@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | Academic Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">A</div>
+            <div>
+                <h2>Acadex</h2>
+                <p>Student Analytics</p>
+            </div>
+        </div>
+
+        <p class="menu-label">MAIN MENU</p>
+
+        <nav class="navigation">
+            <a href="/" class="nav-item">▦ <span>Dashboard</span></a>
+            <a href="/courses" class="nav-item">▤ <span>Courses</span></a>
+            <a href="/students" class="nav-item">♙ <span>Students</span></a>
+            <a href="/reports" class="nav-item">▧ <span>Reports</span></a>
+            <a href="/profile" class="nav-item active">♙ <span>Profile</span></a>
+        </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>My Profile</h1>
+                <p class="subtitle">
+                    View your account information and profile details.
+                </p>
+            </div>
+
+            <a href="/" class="text-link">← Back to Dashboard</a>
+        </header>
+
+        <!-- PROFILE CARD -->
+        <section class="profile-page-card">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-main">
+
+                <div class="profile-large-avatar">A</div>
+
+                <div class="profile-heading">
+                    <h2>Academic Administrator</h2>
+                    <p>Academic Analytics Dashboard</p>
+                </div>
+
+                <span class="profile-role">Administrator</span>
+
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <!-- INFORMATION -->
+            <div class="profile-information">
+
+                <h3>Personal Information</h3>
+
+                <div class="profile-info-grid">
+
+                    <div class="profile-info-item">
+                        <span>Full Name</span>
+                        <h4>Academic Administrator</h4>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span>Email Address</span>
+                        <h4>admin@example.com</h4>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span>Role</span>
+                        <h4>Dashboard Administrator</h4>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span>Department</span>
+                        <h4>Academic Analytics</h4>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="profile-note">
+                <span>ⓘ</span>
+                This profile displays sample administrator information.
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

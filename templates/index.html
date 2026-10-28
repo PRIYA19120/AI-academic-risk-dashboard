@@ -1,380 +1,296 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Analytics Dashboard</title>
+    <title>Login | AI Academic Risk Dashboard</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+       body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: red !important;
+}
+
+        .login-container {
+            width: 100%;
+            max-width: 950px;
+            min-height: 540px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #ffffff;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-section {
+            background: linear-gradient(145deg, #1d4ed8, #4338ca);
+            color: white;
+            padding: 55px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.18);
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 28px;
+        }
+
+        .welcome-section h1 {
+            font-size: 32px;
+            line-height: 1.3;
+            margin-bottom: 18px;
+        }
+
+        .welcome-section p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #e0e7ff;
+        }
+
+        .features {
+            margin-top: 30px;
+            display: grid;
+            gap: 15px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 9px;
+        }
+
+        .form-section {
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-section h2 {
+            font-size: 29px;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 9px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            color: #111827;
+            background: #f9fafb;
+            transition: 0.25s;
+        }
+
+        .input-group input:focus {
+            border-color: #4f46e5;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #2563eb, #4f46e5);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        .error-message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            font-size: 13px;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 28px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 700px) {
+            .login-container {
+                max-width: 430px;
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-section {
+                padding: 30px;
+            }
+
+            .welcome-section h1 {
+                font-size: 25px;
+            }
+
+            .features {
+                display: none;
+            }
+
+            .logo {
+                width: 48px;
+                height: 48px;
+                font-size: 23px;
+                margin-bottom: 16px;
+            }
+
+            .form-section {
+                padding: 35px 28px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div class="app-layout">
+    <div class="login-container">
 
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">A</div>
-            <div>
-                <h2>Acadex</h2>
-                <p>Student Analytics</p>
-            </div>
-        </div>
+        <section class="welcome-section">
+            <div class="logo">A</div>
 
-        <p class="menu-label">MAIN MENU</p>
+            <h1>AI Academic<br>Risk Dashboard</h1>
 
-        <nav class="navigation">
-            <a href="/" class="nav-item active">▦ <span>Dashboard</span></a>
-            <a href="/courses" class="nav-item">▤ <span>Courses</span></a>
-            <a href="/students" class="nav-item">♙ <span>Students</span></a>
-            <a href="/reports" class="nav-item">▧ <span>Reports</span></a>
-         <a href="/profile" class="nav-item">▦ <span>Profile</span></a>
-         <a href="/settings" class="nav-item">▧ <span>Settings</span></a>
-        
-        
-        </nav>
+            <p>
+                Monitor student performance, analyze academic data,
+                and identify students who may need additional support.
+            </p>
 
-        <div class="sidebar-bottom">
-            <div class="help-card">
-                <div class="help-icon">✦</div>
-                <h3>Academic Insights</h3>
-                <p>Review student performance and identify support needs.</p>
-            </div>
-        </div>
-    </aside>
-
-    <main class="main-content">
-
-        <header class="topbar">
-            <div>
-                <h1>Dashboard Overview</h1>
-                <p class="subtitle">Welcome back! Here's your academic summary.</p>
-            </div>
-
-            <div class="topbar-right">
-                <span class="online-indicator"></span>
-                <span>Academic Analytics</span>
-                <div class="profile-avatar">A</div>
-            </div>
-        </header>
-
-        <!-- STATISTICS CARDS -->
-        <section class="stats-grid">
-
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span>Total Students</span>
-                    <div class="stat-icon purple">♙</div>
-                </div>
-                <h2>{{ total_students }}</h2>
-                <p class="stat-note">Unique students analysed</p>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span>Average Marks</span>
-                    <div class="stat-icon blue">▥</div>
-                </div>
-                <h2>{{ average_marks }}<small>%</small></h2>
-                <p class="stat-note">Overall academic score</p>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span>Average Attendance</span>
-                    <div class="stat-icon cyan">◷</div>
-                </div>
-                <h2>{{ average_attendance }}<small>%</small></h2>
-                <p class="stat-note">Across academic records</p>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span>Total Courses</span>
-                    <div class="stat-icon pink">▤</div>
-                </div>
-                <h2>{{ courses_count }}</h2>
-                <p class="stat-note">Courses in the dataset</p>
-            </div>
-
-        </section>
-
-        <!-- CHARTS -->
-        <section class="analytics-grid">
-
-            <div class="panel performance-panel">
-                <div class="panel-heading">
-                    <div>
-                        <h2>Academic Performance</h2>
-                        <p>Average score across assessment components</p>
-                    </div>
-                    <span class="panel-badge">Overview</span>
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">📊</span>
+                    <span>Academic Performance Analytics</span>
                 </div>
 
-                <div class="performance-chart">
-                    <canvas id="performanceChart"></canvas>
-                </div>
-            </div>
-
-            <div class="panel distribution-panel">
-                <div class="panel-heading">
-                    <div>
-                        <h2>Student Support</h2>
-                        <p>Support category distribution</p>
-                    </div>
+                <div class="feature">
+                    <span class="feature-icon">🤖</span>
+                    <span>AI-Based Risk Analysis</span>
                 </div>
 
-                <div class="donut-container">
-                    <canvas id="supportChart"></canvas>
-
-                    <div class="donut-center">
-                        <h3>{{ total_students }}</h3>
-                        <p>Students</p>
-                    </div>
-                </div>
-
-                <div class="legend-list">
-                    <div>
-                        <span class="legend-label">
-                            <i class="legend-dot low-dot"></i>
-                            Low Support Need
-                        </span>
-                        <strong>{{ low_support }}</strong>
-                    </div>
-
-                    <div>
-                        <span class="legend-label">
-                            <i class="legend-dot moderate-dot"></i>
-                            Moderate Support
-                        </span>
-                        <strong>{{ moderate_support }}</strong>
-                    </div>
-
-                    <div>
-                        <span class="legend-label">
-                            <i class="legend-dot review-dot"></i>
-                            Further Review
-                        </span>
-                        <strong>{{ further_review }}</strong>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- SUPPORT SUMMARY -->
-        <section class="support-summary">
-            <div class="summary-heading">
-                <div>
-                    <h2>Student Support Summary</h2>
-                    <p>Students who may need academic attention</p>
-                </div>
-                <a href="/students" class="text-link">View all students →</a>
-            </div>
-
-            <div class="support-cards">
-                <div class="support-card">
-                    <div class="support-card-icon low-bg">✓</div>
-                    <div>
-                        <p>Low Support Need</p>
-                        <h3>{{ low_support }}</h3>
-                    </div>
-                </div>
-
-                <div class="support-card">
-                    <div class="support-card-icon moderate-bg">!</div>
-                    <div>
-                        <p>Moderate Support</p>
-                        <h3>{{ moderate_support }}</h3>
-                    </div>
-                </div>
-
-                <div class="support-card">
-                    <div class="support-card-icon review-bg">↗</div>
-                    <div>
-                        <p>Further Review</p>
-                        <h3>{{ further_review }}</h3>
-                    </div>
+                <div class="feature">
+                    <span class="feature-icon">📈</span>
+                    <span>Student Progress Reports</span>
                 </div>
             </div>
         </section>
 
-        <!-- STUDENT TABLE -->
-        <section class="panel table-panel">
-            <div class="panel-heading table-heading">
-                <div>
-                    <h2>Students Requiring Further Review</h2>
-                    <p>Students flagged by the current support rules</p>
+        <section class="form-section">
+            <h2>Welcome Back!</h2>
+
+            <p class="subtitle">
+                Sign in to access your academic dashboard.
+            </p>
+
+            {% if error %}
+                <div class="error-message">{{ error }}</div>
+            {% endif %}
+
+            <form action="{{ url_for('login') }}" method="POST">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                    >
                 </div>
-                <a href="/students" class="text-link">All students →</a>
-            </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>STUDENT ID</th>
-                            <th>STUDENT NAME</th>
-                            <th>ATTENDANCE</th>
-                            <th>FINAL MARKS</th>
-                            <th>STATUS</th>
-                            <th>ACTION</th>
-                        </tr>
-                    </thead>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
 
-                    <tbody>
-                        {% for student in review_students %}
-                        <tr>
-                            <td class="student-id">
-                                {{ student["Student_ID"] }}
-                            </td>
+                <button type="submit" class="login-button">
+                    Sign In →
+                </button>
+            </form>
 
-                            <td>
-                                <div class="student-name">
-                                    <div class="student-avatar">
-                                        {{ student["Student_Name"][0] }}
-                                    </div>
-                                    {{ student["Student_Name"] }}
-                                </div>
-                            </td>
-
-                            <td>{{ student["Attendance"] }}%</td>
-                            <td>{{ student["Final_Marks"] }}%</td>
-
-                            <td>
-                                <span class="status-pill">Further Review</span>
-                            </td>
-
-                            <td>
-                                <a class="view-link"
-                                   href="/student/{{ student['Student_ID'] }}">
-                                    View Details →
-                                </a>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="6" class="empty-state">
-                                No students currently require further review.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <p class="footer-text">
+                AI Academic Risk Dashboard<br>
+                Student Performance & Support System
+            </p>
         </section>
 
-        <footer class="footer">
-            Academic Analytics Dashboard · Support categories use rule-based indicators.
-        </footer>
-
-    </main>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    new Chart(document.getElementById('performanceChart'), {
-        type: 'bar',
-
-        data: {
-            labels: ['Attendance', 'Assignment', 'Quiz', 'Internal', 'Exam'],
-
-            datasets: [{
-                label: 'Average Performance',
-
-                data: [
-                    {{ average_attendance }},
-                    {{ average_assignment }},
-                    {{ average_quiz }},
-                    {{ average_internal }},
-                    {{ average_exam }}
-                ],
-
-                backgroundColor: [
-                    '#8b78f9',
-                    '#69a9f7',
-                    '#53c7d9',
-                    '#ed91c5',
-                    '#a18af8'
-                ],
-
-                borderRadius: 7,
-                borderSkipped: false,
-                maxBarThickness: 42
-            }]
-        },
-
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-
-            plugins: {
-                legend: { display: false }
-            },
-
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-
-                    ticks: {
-                        stepSize: 20,
-                        color: '#8490a7',
-                        callback: value => value + '%'
-                    },
-
-                    grid: { color: '#edf0f7' },
-                    border: { display: false }
-                },
-
-                x: {
-                    ticks: { color: '#65718a' },
-                    grid: { display: false },
-                    border: { display: false }
-                }
-            }
-        }
-    });
-
-    new Chart(document.getElementById('supportChart'), {
-        type: 'doughnut',
-
-        data: {
-            labels: [
-                'Low Support Need',
-                'Moderate Support',
-                'Further Review'
-            ],
-
-            datasets: [{
-                data: [
-                    {{ low_support }},
-                    {{ moderate_support }},
-                    {{ further_review }}
-                ],
-
-                backgroundColor: [
-                    '#8b78f9',
-                    '#69a9f7',
-                    '#ed91c5'
-                ],
-
-                borderWidth: 0,
-                hoverOffset: 5
-            }]
-        },
-
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '76%',
-            plugins: {
-                legend: { display: false }
-            }
-        }
-    });
-</script>
-
+    </div>
 </body>
 </html>

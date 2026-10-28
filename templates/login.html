@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Acadex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <section class="login-left">
+            <div class="brand">
+                <div class="brand-icon">A</div>
+                <span>Acadex</span>
+            </div>
+
+            <div class="welcome-content">
+                <span class="tagline">AI POWERED ACADEMICS</span>
+                <h1>Welcome Back!</h1>
+                <p>Monitor student performance, explore academic insights and identify students who may need additional support.</p>
+
+                <div class="feature-list">
+                    <div class="feature"><span>✓</span> Student Performance Analytics</div>
+                    <div class="feature"><span>✓</span> Academic Risk Monitoring</div>
+                    <div class="feature"><span>✓</span> Smart Academic Reports</div>
+                </div>
+            </div>
+
+            <p class="copyright">© 2026 Acadex</p>
+        </section>
+
+        <section class="login-right">
+            <div class="login-card">
+                <div class="mobile-brand">
+                    <div class="brand-icon">A</div>
+                    <span>Acadex</span>
+                </div>
+
+                <span class="small-heading">YOUR ACADEMIC WORKSPACE</span>
+                <h2>Sign In</h2>
+                <p class="subtitle">Enter your login details to continue.</p>
+
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+
+                <form action="{{ url_for('login') }}" method="POST">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username"
+                               placeholder="Enter username"
+                               autocomplete="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password"
+                               placeholder="Enter password"
+                               autocomplete="current-password" required>
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        Sign In <span>→</span>
+                    </button>
+                </form>
+
+                <p class="login-footer">AI Academic Risk Dashboard</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

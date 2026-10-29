@@ -340,7 +340,7 @@ def login():
             session["username"] = username
 
             return redirect(
-                url_for("dashboard")
+                url_for("profile")
             )
 
         error = (
@@ -351,6 +351,13 @@ def login():
     return render_template(
         "login.html",
         error=error
+    )
+
+@app.route("/profile")
+def profile():
+    return render_template(
+        "profile.html",
+        username=session.get("username", "admin")
     )
 
 

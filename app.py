@@ -19,11 +19,16 @@ from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
 
-app.secret_key = os.environ.get(
-    "FLASK_SECRET_KEY",
-    "change-this-secret-key-before-deployment"
-)
+# Stable secret key keeps the login session valid between page requests.
+app = Flask(__name__)
 
+app.config["SECRET_KEY"] = "acadex_fixed_secret_2026"
+app.config["SESSION_COOKIE_NAME"] = "acadex_login_session"
+app.config["SESSION_COOKIE_PATH"] = "/"
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_PERMANENT"] = True
 DEMO_USERNAME = os.environ.get(
     "ACADEX_USERNAME", "admin"
 )
@@ -287,19 +292,25 @@ def initialize_app():
     update_predictions()
 
 
+
+
 @app.before_request
 def check_login_and_refresh():
-    if request.endpoint == "static":
-        return None
 
-    if request.endpoint == "login":
+    print("REQUEST:", request.path)
+    print("SESSION:", dict(session))
+
+    if request.endpoint in ("static", "login", "logout"):
         return None
 
     if not session.get("logged_in"):
+        print("SESSION MISSING - REDIRECTING TO LOGIN")
         return redirect(url_for("login"))
 
-    refresh_dataset()
+    if not df.empty:
+        refresh_dataset()
 
+    return None
 
 def get_support_counts(series):
     return {
@@ -314,51 +325,30 @@ def get_support_counts(series):
         )
     }
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if session.get("logged_in"):
-        return redirect(url_for("dashboard"))
 
     error = None
 
     if request.method == "POST":
-        username = request.form.get(
-            "username", ""
-        ).strip()
 
-        password = request.form.get(
-            "password", ""
-        )
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
 
-        if (
-            username == DEMO_USERNAME
-            and password == DEMO_PASSWORD
-        ):
+        if username == DEMO_USERNAME and password == DEMO_PASSWORD:
+
             session.clear()
             session["logged_in"] = True
             session["username"] = username
+            session.permanent = True
 
-            return redirect(
-                url_for("profile")
-            )
+            print("LOGIN SESSION:", dict(session))
 
-        error = (
-            "Invalid username or password. "
-            "Please try again."
-        )
+            return redirect(url_for("profile"))
 
-    return render_template(
-        "login.html",
-        error=error
-    )
+        error = "Invalid username or password."
 
-@app.route("/profile")
-def profile():
-    return render_template(
-        "profile.html",
-        username=session.get("username", "admin")
-    )
+    return render_template("login.html", error=error)
 
 
 @app.route("/logout")

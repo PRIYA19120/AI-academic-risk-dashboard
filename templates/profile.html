@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Acadex</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .profile-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 25px;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .profile-card {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 35px rgba(30, 64, 175, 0.10);
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .profile-card h1 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .profile-card p {
+            color: #64748b;
+            line-height: 1.7;
+        }
+
+        .profile-info {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .profile-info p {
+            margin: 8px 0;
+            color: #334155;
+        }
+
+        .dashboard-button {
+            display: inline-block;
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            box-sizing: border-box;
+        }
+
+        .dashboard-button:hover {
+            background: #1d4ed8;
+        }
+
+        .logout-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #64748b;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <main class="profile-page">
+        <section class="profile-card">
+            <div class="profile-avatar">A</div>
+
+            <h1>Welcome to Acadex!</h1>
+            <p>Your academic workspace is ready.</p>
+
+            <div class="profile-info">
+                <p><strong>Username:</strong> {{ username }}</p>
+                <p><strong>Platform:</strong> AI Academic Risk Dashboard</p>
+                <p><strong>Access:</strong> Logged In</p>
+            </div>
+
+            <a href="{{ url_for('dashboard') }}" class="dashboard-button">
+                Go to Dashboard →
+            </a>
+
+            <a href="{{ url_for('logout') }}" class="logout-link">
+                Logout
+            </a>
+        </section>
+    </main>
+</body>
+</html>

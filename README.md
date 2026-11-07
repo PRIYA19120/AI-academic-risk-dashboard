@@ -2,7 +2,11 @@
 
 An AI-powered academic dashboard designed to monitor and analyze student academic performance using attendance, marks, assignments, and other performance indicators.
 
-> 🚧 This project is currently under active development.
+## 🌐 Live Demo
+
+🚀 **Live Website:** [AI Academic Risk Dashboard](https://priya19120.github.io/AI-academic-risk-dashboard/)
+
+Click the link above to explore the live project.
 
 ## 📌 Project Overview
 
